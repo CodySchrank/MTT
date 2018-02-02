@@ -11,7 +11,9 @@
     <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
     <!-- set the version automatically -->
     <VersionPrefix>0.1.0</VersionPrefix>
-    <VersionSuffix>build$([System.DateTime]::Now.ToString('yyyyMMdd-HHmm'))</VersionSuffix>
+    <Title>C# Models To Typescript</Title>
+    <Authors>Cody Schrank</Authors>
+    <Description>Converts C# DTOs to Typescript using MSBUILD Tasks.  Not being actively maintained.</Description>
   </PropertyGroup>
 
   <ItemGroup>

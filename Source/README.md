@@ -10,11 +10,11 @@ Right now it:
 
 -- Does not apply inheritence
 
-##Options
+## Options
 *Working Directory* is the directory of the cs models
 *Convert Directory* is the directory of the ts models
 
-##Example .csproj
+## Example .csproj
 ```
 <Project Sdk="Microsoft.NET.Sdk">
 
@@ -33,7 +33,7 @@ Right now it:
 </Project>
 ```
 
-##Notes
+## Notes
 Does not apply the keyword *Resource* from the C# models to the Typescript models
 Follows the case and naming conventions of each language.
 C# is Pascal Case
