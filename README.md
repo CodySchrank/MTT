@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <Target Name="Convert" BeforeTargets="PrepareForBuild">
-    <ConvertMain WorkingDirectory="Resources/" ConvertDirectory="models/"/>
+    <MTT WorkingDirectory="Resources/" ConvertDirectory="models/"/>
   </Target>
 
 </Project>
