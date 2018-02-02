@@ -10,7 +10,7 @@
     <!-- Change the default location where NuGet will put the build output -->
     <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
     <!-- set the version automatically -->
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionPrefix>0.1.1</VersionPrefix>
     <Title>C# Models To Typescript</Title>
     <Authors>Cody Schrank</Authors>
     <Description>Converts C# DTOs to Typescript using MSBUILD Tasks.</Description>
