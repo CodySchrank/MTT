@@ -10,6 +10,7 @@ Right now it:
 
 ## Options
 *Working Directory* is the input directory of the cs models
+
 *Convert Directory* is the output directory of the ts models
 
 ## Example .csproj
@@ -40,6 +41,9 @@ Typescript is Camel Case
 
 ## WARNING
 -- Does not apply inheritence
+
 -- Does not convert enums
+
 -- Does not look for private properties
+
 
