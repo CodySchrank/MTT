@@ -2,4 +2,5 @@ obj/
 packages/
 bin/
 artifacts/
+models/
 .dotnet/
