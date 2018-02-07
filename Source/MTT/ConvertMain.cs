@@ -6,6 +6,12 @@ using Microsoft.Build.Framework;
 using MTT;
 using MSBuildTask = Microsoft.Build.Utilities.Task;
 
+
+/**
+    TODO:
+    Add inheritance
+ */
+
 namespace MSBuildTasks
 {
     public class ConvertMain : MSBuildTask
@@ -20,7 +26,7 @@ namespace MSBuildTasks
         /// </summary>
         public string ConvertDirectory { get; set; }
 
-        protected MessageImportance LoggingImportance { get; } = MessageImportance.Normal;
+        protected MessageImportance LoggingImportance { get; } = MessageImportance.High;
 
         private List<ModelFile> Models {get; set;}
 
@@ -82,9 +88,9 @@ namespace MSBuildTasks
                 Log.LogError("Convert Directory does not exist {0}, creating..", localdir);
             } else {
                 Log.LogMessage(LoggingImportance, "Using User Directory {0}", localdir);
+                Directory.Delete(localdir, true);
             }
 
-            Directory.Delete(localdir,true);
             Directory.CreateDirectory(localdir).Create();
             LocalConvertDir = localdir;
             return;
@@ -124,7 +130,7 @@ namespace MSBuildTasks
 
             var modelFile = new ModelFile()
             {
-                Name = fileName.Replace("Resource", String.Empty).Replace(".cs", String.Empty),
+                Name = ToPascalCase(fileName.Replace("Resource", String.Empty).Replace(".cs", String.Empty)),
                 Info = fileInfo,
                 Structure = structure
             };
@@ -135,19 +141,20 @@ namespace MSBuildTasks
         public void BreakDown() {
             foreach (var file in Models)
             {
-                //TODO:  Check inheritence
+                //TODO:  Could check class inheritence here
 
                 foreach (var line in file.Info)
                 {
-                    if(line.Contains("public") && !line.Contains("class")) {
+                    if(line.Contains("public") && !line.Contains("class") && !IsContructor(line)) {
                         string[] modLine = line.Replace("public", "").Trim().Split(' ');
 
                         string type = modLine[0];
+
+                        bool IsArray = CheckIsArray(type);
                         
-                        type = type.Replace("Resource", String.Empty);
+                        type = CleanType(type);
 
                         bool isUserDefined = false;
-
                         var userDefinedImport = "";
 
                         foreach (var f in Models)
@@ -156,20 +163,17 @@ namespace MSBuildTasks
                                 isUserDefined = true;
                                 
                                 if (file.Structure.Equals(f.Structure)){
-                                    userDefinedImport = "./" + type.ToLower(); //same dir
+                                    userDefinedImport = "./" + ToCamelCase(type); //same dir
                                 } else if(String.IsNullOrEmpty(file.Structure)) {
-                                    userDefinedImport = "./" + f.Structure + "/" + type.ToLower();  //top level
+                                    userDefinedImport = "./" + f.Structure + "/" + ToCamelCase(type);  //top level
                                 } else {
-                                    userDefinedImport = "../" + f.Structure + "/" + type.ToLower(); //different dir
+                                    userDefinedImport = "../" + f.Structure + "/" + ToCamelCase(type); //different dir
                                 }
                                 
                             }
                         }
 
                         string varName = modLine[1];
-                        bool IsArray = type.Contains("[]");
-
-                        type = type.Replace("[]", String.Empty);
 
                         LineObject obj = new LineObject() {
                             VariableName = varName,
@@ -207,6 +211,9 @@ namespace MSBuildTasks
                 case "string":
                 return "string";
 
+                case "DateTime":
+                return "Date";
+
                 default: return "any";
             }
         }
@@ -219,7 +226,8 @@ namespace MSBuildTasks
                 DirectoryInfo di = Directory.CreateDirectory(Path.Combine(LocalConvertDir, file.Structure));
                 di.Create();
 
-                string fileName = file.Name.ToLower() + ".ts";
+                string fileName = ToCamelCase(file.Name + ".ts");
+                Log.LogMessage(LoggingImportance, "Creating file {0}", fileName);
                 string saveDir = Path.Combine(di.FullName,fileName);
                 
                 using (var stream = new FileStream(saveDir, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.SequentialScan))
@@ -232,7 +240,7 @@ namespace MSBuildTasks
                             {
                                 if(obj.UserDefined) {
                                     importing = true;
-                                    f.WriteLine("import { " + obj.Type + " } from \"" + obj.UserDefinedImport + "\"");
+                                    f.WriteLine("import { " + obj.Type + " } from \"" + obj.UserDefinedImport + "\"");  //need to check for duplicate imports
                                 }
                             }
 
@@ -272,6 +280,30 @@ namespace MSBuildTasks
             if(isCaps) return str.ToLower();
 
             return Char.ToLowerInvariant(str[0]) + str.Substring(1);
+        }
+
+        private string ToPascalCase(string str) {
+            if (String.IsNullOrEmpty(str) || Char.IsUpper(str, 0))
+                return str;
+
+            return Char.ToUpperInvariant(str[0]) + str.Substring(1);
+        }
+
+        public bool CheckIsArray(string type)
+        {
+            return type.Contains("[]") || type.Contains("ICollection") || type.Contains("IEnumerable");
+        }
+
+        public string CleanType(string type) {
+            return type.Replace("[]", String.Empty)
+                .Replace("ICollection", String.Empty)
+                .Replace("IEnumerable", String.Empty)
+                .Replace("<", String.Empty)
+                .Replace(">", String.Empty);
+        }
+
+        public bool IsContructor(string line) {
+            return line.Contains("()") || ((line.Contains("(") && line.Contains(")")));
         }
     }
 }

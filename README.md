@@ -1,13 +1,19 @@
 # Models To Typescript
 
--- Only converts public properties 
+-- Converts c# classes to typescript interfaces
 
--- Matches the directory structure of the models, however it only checks 1 lower directory from *Working Directory*
+-- Only looks for public properties
+
+-- Ignores c# constructors
+
+-- Imports all required dependencies for typescript models
+
+-- Matches the directory structure of the dto's, however it only checks 1 lower directory from *Working Directory*
 
 ## Options
-*Working Directory* is the input directory of the cs models
+*Working Directory* is the input directory of the cs dtos
 
-*Convert Directory* is the output directory of the ts models
+*Convert Directory* is the output directory of the ts interfaces
 
 ## Example .csproj
 ```
@@ -22,23 +28,22 @@
   </ItemGroup>
 
   <Target Name="Convert" BeforeTargets="PrepareForBuild">
-    <MTT WorkingDirectory="Resources/" ConvertDirectory="models/"/>
+    <ConvertMain WorkingDirectory="Resources/" ConvertDirectory="models/"/>
   </Target>
 
 </Project>
 ```
 
 ## Notes
-Does not apply the keyword *Resource* from the C# models to the Typescript models
+**If a *Convert Directory* is supplied, it will be deleted everytime script is ran and will be remade**
 
-If a *Convert Directory* is supplied, it will be deleted everytime script is ran and remade
+Does not apply the keyword *Resource* from the C# models to the Typescript models
 
 Follows the case and naming conventions of each language.
 
-## WARNING
--- Does not apply inheritence
+-- Does not apply class inheritence
 
--- Does not convert enums
+-- Does not convert enums, tuples, or complex objects at this time
 
 -- Does not look for private properties
 
