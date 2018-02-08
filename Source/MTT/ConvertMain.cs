@@ -53,7 +53,7 @@ namespace MSBuildTasks
             return true;
         }
 
-        public void GetWorkingDirectory() {
+        private void GetWorkingDirectory() {
             var dir = Directory.GetCurrentDirectory();
 
             if(string.IsNullOrEmpty(WorkingDirectory)) {
@@ -76,7 +76,7 @@ namespace MSBuildTasks
             return;
         }
 
-        public void GetConvertDirectory() {
+        private void GetConvertDirectory() {
             var dir = Directory.GetCurrentDirectory();
 
             if (string.IsNullOrEmpty(ConvertDirectory))
@@ -101,7 +101,7 @@ namespace MSBuildTasks
             return;
         }
 
-        public void LoadModels() {
+        private void LoadModels() {
             var files = Directory.GetFiles(LocalWorkingDir);
             var dirs = Directory.GetDirectories(LocalWorkingDir);
 
@@ -127,7 +127,7 @@ namespace MSBuildTasks
             }
         }
 
-        public void AddModel(string file, string structure = "") {
+        private void AddModel(string file, string structure = "") {
             string[] explodedDir = file.Split('/');
             string fileName = explodedDir[explodedDir.Length -1];
 
@@ -143,7 +143,7 @@ namespace MSBuildTasks
             Models.Add(modelFile);
         }
 
-        public void BreakDown() {
+        private void BreakDown() {
             foreach (var file in Models)
             {
                 //TODO:  Could check class inheritence here
@@ -223,7 +223,7 @@ namespace MSBuildTasks
             }
         }
 
-        public void Convert() {
+        private void Convert() {
             Log.LogMessage(LoggingImportance, "Converting..");
 
             foreach (var file in Models)
@@ -302,12 +302,12 @@ namespace MSBuildTasks
             return Char.ToUpperInvariant(str[0]) + str.Substring(1);
         }
 
-        public bool CheckIsArray(string type)
+        private bool CheckIsArray(string type)
         {
             return type.Contains("[]") || type.Contains("ICollection") || type.Contains("IEnumerable");
         }
 
-        public string CleanType(string type) {
+        private string CleanType(string type) {
             return type.Replace("[]", String.Empty)
                 .Replace("ICollection", String.Empty)
                 .Replace("IEnumerable", String.Empty)
@@ -315,7 +315,7 @@ namespace MSBuildTasks
                 .Replace(">", String.Empty);
         }
 
-        public bool IsContructor(string line) {
+        private bool IsContructor(string line) {
             return line.Contains("()") || ((line.Contains("(") && line.Contains(")")));
         }
     }
