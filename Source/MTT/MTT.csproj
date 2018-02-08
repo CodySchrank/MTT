@@ -11,7 +11,10 @@
     <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
     <!-- set the version automatically -->
     <VersionPrefix>0.1.5</VersionPrefix>
-    <!-- The suffix is required because nuget will only update if the package is newer, this tricks it -->
+    <!-- 
+        The suffix is required because nuget will only update if the package is newer, this tricks it. 
+        note: I think this is kinda broken ex: 0.1.5 has precedence over 0.1.5-build123412341  
+    -->
     <!-- <VersionSuffix>build$([System.DateTime]::Now.ToString('yyyyMMddHHmm'))</VersionSuffix> -->
     <Title>C# Models To Typescript</Title>
     <Authors>Cody Schrank</Authors>
