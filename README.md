@@ -34,8 +34,8 @@
 </Project>
 ```
 
-## Converts
-It correctly converts the following C# types:
+## Types
+It correctly converts the following C# types to the equivalent typescript:
 
 * byte
 * sbyte
