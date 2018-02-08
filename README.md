@@ -34,17 +34,33 @@
 </Project>
 ```
 
+## Converts
+It correctly converts the following C# types:
+
+* byte
+* sbyte
+* decimal
+* double
+* float
+* int
+* uint
+* long
+* ulong
+* short
+* ushort            
+* bool
+* string
+* DateTime
+* IEnumerable
+* ICollection
+
 ## Notes
 **If a *Convert Directory* is supplied, it will be deleted everytime script is ran and will be remade**
 
 Does not apply the keyword *Resource* from the C# models to the Typescript models
 
+Does not apply class inheritence
+
 Follows the case and naming conventions of each language.
-
--- Does not apply class inheritence
-
--- Does not convert enums, tuples, or complex objects at this time
-
--- Does not look for private properties
 
 
