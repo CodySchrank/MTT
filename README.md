@@ -63,4 +63,4 @@ Does not apply class inheritence
 
 Follows the case and naming conventions of each language.
 
-
+Thanks to natemcmaster [this project](https://github.com/natemcmaster/msbuild-tasks) really helped me out!
