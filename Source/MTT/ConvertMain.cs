@@ -6,12 +6,6 @@ using Microsoft.Build.Framework;
 using MTT;
 using MSBuildTask = Microsoft.Build.Utilities.Task;
 
-
-/**
-    TODO:
-    Add inheritance
- */
-
 namespace MSBuildTasks
 {
     public class ConvertMain : MSBuildTask
@@ -123,7 +117,7 @@ namespace MSBuildTasks
 
             foreach (var file in files)
             {
-                AddModel(file, "");
+                AddModel(file);
             }
         }
 
