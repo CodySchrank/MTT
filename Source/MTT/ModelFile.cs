@@ -9,6 +9,10 @@ namespace MTT
 
         public string[] Info { get; set; } 
 
+        public string Inherits { get; set; }
+
+        public string InheritenceStructure { get; set; }
+
         public List<LineObject> Objects { get; set; }
 
         public string Structure { get; set; }
