@@ -61,8 +61,6 @@ It correctly converts the following C# types to the equivalent typescript:
 ## Notes
 **If a *Convert Directory* is supplied, it will be deleted everytime script is ran and will be remade**
 
-Does not apply the keyword *Resource* from the C# models to the Typescript models
-
 Follows the case and naming conventions of each language.
 
 Thanks to natemcmaster [this project](https://github.com/natemcmaster/msbuild-tasks) really helped me out!

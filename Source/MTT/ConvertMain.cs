@@ -129,7 +129,7 @@ namespace MSBuildTasks
 
             var modelFile = new ModelFile()
             {
-                Name = ToPascalCase(fileName.Replace("Resource", String.Empty).Replace(".cs", String.Empty)),
+                Name = ToPascalCase(fileName.Replace(".cs", String.Empty)),
                 Info = fileInfo,
                 Structure = structure
             };

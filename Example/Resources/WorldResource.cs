@@ -7,6 +7,7 @@ namespace Example.Resources
     {
         public string Name { get; set; }
         public ICollection<Animal> Animals { get; set; }
+        public KingdomResource Kingdom { get; set; }
 
         public World() {
             this.Animals = new Collection<Animal>();
