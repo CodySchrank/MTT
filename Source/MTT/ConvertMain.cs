@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 using MTT;
 using MSBuildTask = Microsoft.Build.Utilities.Task;
@@ -122,7 +123,12 @@ namespace MSBuildTasks
         }
 
         private void AddModel(string file, string structure = "") {
-            string[] explodedDir = file.Split('/');
+            string[] explodedDir;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                explodedDir = file.Split('\\'); 
+            } else {
+                explodedDir = file.Split('/');
+            }
             string fileName = explodedDir[explodedDir.Length -1];
 
             string[] fileInfo = File.ReadAllLines(file);
