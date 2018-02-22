@@ -19,4 +19,4 @@ rm -rf Source/MTT/obj/
 __exec dotnet restore ./Source/MTT/
 __exec dotnet pack -c Release ./Source/MTT/
 __exec dotnet restore ./Example/
-__exec dotnet msbuild /nologo '/t:Convert' ./Example/
+__exec dotnet msbuild /nologo '/t:ConvertMain' ./Example/
