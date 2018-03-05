@@ -124,12 +124,9 @@ namespace MSBuildTasks
 
         private void AddModel(string file, string structure = "") {       
             if(GetOSPlatform() == OSPlatform.Windows) {
-                Log.LogMessage(LoggingImportance, "Windows..", file, structure);
                 file = file.Replace('\\','/');
                 structure = structure.Replace('\\', '/');
             }
-
-            Log.LogMessage(LoggingImportance, "{0}, {1}", file, structure);
 
             string[] explodedDir = file.Split('/');
 
@@ -143,8 +140,6 @@ namespace MSBuildTasks
                 Info = fileInfo,
                 Structure = structure
             };
-
-            Log.LogMessage(LoggingImportance, "{0}", modelFile.PrintBasic());
 
             Models.Add(modelFile);
         }

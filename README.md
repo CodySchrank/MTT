@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MTT" Version="0.2.0" PrivateAssets="All" />
+    <PackageReference Include="MTT" Version="0.3.0" PrivateAssets="All" />
   </ItemGroup>
 
   <Target Name="Convert" BeforeTargets="PrepareForBuild">
@@ -60,10 +60,6 @@ It correctly converts the following C# types to the equivalent typescript:
 
 ## Notes
 **If a *Convert Directory* is supplied, it will be deleted everytime script is ran and will be remade**
-
-**BUGGY ON WINDOWS**
-
-Works on MacOS
 
 Follows the case and naming conventions of each language.
 
