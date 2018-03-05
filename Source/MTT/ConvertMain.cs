@@ -123,12 +123,8 @@ namespace MSBuildTasks
         }
 
         private void AddModel(string file, string structure = "") {
-            string[] explodedDir;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                explodedDir = file.Split('\\'); 
-            } else {
-                explodedDir = file.Split('/');
-            }
+            string[] explodedDir = file.Split('/');
+
             string fileName = explodedDir[explodedDir.Length -1];
 
             string[] fileInfo = File.ReadAllLines(file);
