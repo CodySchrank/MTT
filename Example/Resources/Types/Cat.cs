@@ -2,7 +2,7 @@ using Example.Resources.Main;
 
 namespace Example.Resources.Types
 {
-    public class Dog : Animal
+    public class Cat : Animal
     {
         public string Meow { get; set; }
     }

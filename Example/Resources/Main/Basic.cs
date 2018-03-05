@@ -1,3 +1,5 @@
+using System;
+
 namespace Example.Resources.Main
 {
     public class Basic

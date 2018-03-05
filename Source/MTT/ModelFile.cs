@@ -17,9 +17,25 @@ namespace MTT
 
         public string Structure { get; set; }
 
-        public ModelFile()
-        {
+        public ModelFile() {
             Objects = new List<LineObject>();
+        }
+
+        public string PrintBasic() {
+            return Name.ToString()
+            + " : " + Structure.ToString();
+        }
+
+        public override string ToString() {
+            var str = "" + this.PrintBasic() + ":\n";
+
+            if(Objects != null) {
+                foreach (var obj in Objects) {
+                    str += obj.VariableName + ": " + obj.Type + "\n";
+                }
+            }
+
+            return str + "\n";
         }
     }
 }

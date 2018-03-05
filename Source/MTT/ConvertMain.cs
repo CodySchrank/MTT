@@ -1,10 +1,10 @@
+using MTT;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
-using MTT;
 using MSBuildTask = Microsoft.Build.Utilities.Task;
 
 namespace MSBuildTasks
@@ -44,7 +44,7 @@ namespace MSBuildTasks
             GetConvertDirectory();
             LoadModels();
             BreakDown();
-            Convert();
+            // Convert();
             return true;
         }
 
@@ -139,6 +139,7 @@ namespace MSBuildTasks
             Models.Add(modelFile);
         }
 
+
         private void BreakDown() {
             foreach (var file in Models)
             {
@@ -175,6 +176,10 @@ namespace MSBuildTasks
                         file.Objects.Add(obj);
                     }
                 }
+            }
+
+            foreach(var f in Models) {
+                Log.LogMessage(LoggingImportance, "{0}", f.ToString());
             }
         }
 

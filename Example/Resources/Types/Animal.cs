@@ -1,3 +1,5 @@
+using Example.Resources.Main;
+
 namespace Example.Resources.Types
 {
     public class Animal
