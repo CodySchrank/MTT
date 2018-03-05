@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Example.Resources.Types;
 
 namespace Example.Resources
 {

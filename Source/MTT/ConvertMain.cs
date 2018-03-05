@@ -41,10 +41,10 @@ namespace MSBuildTasks
         public override bool Execute()
         {
             GetWorkingDirectory();
-            GetConvertDirectory();
-            LoadModels();
-            BreakDown();
-            Convert();
+            // GetConvertDirectory();
+            // LoadModels();
+            // BreakDown();
+            // Convert();
             return true;
         }
 
