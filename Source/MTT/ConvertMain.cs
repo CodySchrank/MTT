@@ -123,7 +123,7 @@ namespace MSBuildTasks
         }
 
         private void AddModel(string file, string structure = "") {       
-            if(GetOSPlatform() == OSPlatform.Windows) {
+            if(isWindows()) {
                 file = file.Replace('\\','/');
                 structure = structure.Replace('\\', '/');
             }
@@ -362,7 +362,13 @@ namespace MSBuildTasks
             return userDefinedImport;
         }
 
-        
+        private bool isWindows() {
+            #if NET46
+                return Enviroment.OSVerison.Version.Major == "6.2" || Enviroment.OSVerison.Version.Major == "6.3"; //doesn't detect all windows but blame net46
+            #else
+                return GetOSPlatform() == OSPlatform.Windows;
+            #endif
+        }
     
         private OSPlatform GetOSPlatform() { 
             OSPlatform osPlatform = OSPlatform.Create("Other Platform"); 
