@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MTT" Version="0.3.0" PrivateAssets="All" />
+    <PackageReference Include="MTT" Version="0.3.1" PrivateAssets="All" />
   </ItemGroup>
 
   <Target Name="Convert" BeforeTargets="PrepareForBuild">
