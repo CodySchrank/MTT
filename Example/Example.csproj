@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <Target Name="ConvertMain" BeforeTargets="PrepareForBuild">
-    <ConvertMain WorkingDirectory="Resources" ConvertDirectory="models"/>
+    <ConvertMain WorkingDirectory="Resources/" ConvertDirectory="models/"/>
   </Target>
 
 </Project>
