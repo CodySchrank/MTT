@@ -44,7 +44,7 @@ namespace MSBuildTasks
             GetConvertDirectory();
             LoadModels();
             BreakDown();
-            // Convert();
+            Convert();
             return true;
         }
 
@@ -122,10 +122,18 @@ namespace MSBuildTasks
             }
         }
 
-        private void AddModel(string file, string structure = "") {
+        private void AddModel(string file, string structure = "") {       
+            if(GetOSPlatform() == OSPlatform.Windows) {
+                Log.LogMessage(LoggingImportance, "Windows..", file, structure);
+                file = file.Replace('\\','/');
+                structure = structure.Replace('\\', '/');
+            }
+
+            Log.LogMessage(LoggingImportance, "{0}, {1}", file, structure);
+
             string[] explodedDir = file.Split('/');
 
-            string fileName = explodedDir[explodedDir.Length -1];
+            string fileName = explodedDir[explodedDir.Length - 1];
 
             string[] fileInfo = File.ReadAllLines(file);
 
@@ -135,6 +143,8 @@ namespace MSBuildTasks
                 Info = fileInfo,
                 Structure = structure
             };
+
+            Log.LogMessage(LoggingImportance, "{0}", modelFile.PrintBasic());
 
             Models.Add(modelFile);
         }
@@ -176,10 +186,6 @@ namespace MSBuildTasks
                         file.Objects.Add(obj);
                     }
                 }
-            }
-
-            foreach(var f in Models) {
-                Log.LogMessage(LoggingImportance, "{0}", f.ToString());
             }
         }
 
@@ -360,5 +366,22 @@ namespace MSBuildTasks
 
             return userDefinedImport;
         }
+
+        
+    
+        private OSPlatform GetOSPlatform() { 
+            OSPlatform osPlatform = OSPlatform.Create("Other Platform"); 
+            // Check if it's windows 
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows); 
+            osPlatform = isWindows ? OSPlatform.Windows : osPlatform; 
+            // Check if it's osx 
+            bool isOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX); 
+            osPlatform = isOSX ? OSPlatform.OSX : osPlatform; 
+            // Check if it's Linux 
+            bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux); 
+            osPlatform = isLinux ? OSPlatform.Linux : osPlatform; 
+            return osPlatform; 
+        } 
     }
+
 }
