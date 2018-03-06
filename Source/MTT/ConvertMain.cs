@@ -364,12 +364,13 @@ namespace MSBuildTasks
 
         private bool isWindows() {
             #if NET46
-                return Enviroment.OSVerison.Version.Major == "6.2" || Enviroment.OSVerison.Version.Major == "6.3"; //doesn't detect all windows but blame net46
+                return Environment.OSVersion.Version.Major == 6.2 || Environment.OSVersion.Version.Major == 6.3; //doesn't detect all windows but blame net46
             #else
                 return GetOSPlatform() == OSPlatform.Windows;
             #endif
         }
-    
+        
+        #if !NET46
         private OSPlatform GetOSPlatform() { 
             OSPlatform osPlatform = OSPlatform.Create("Other Platform"); 
             // Check if it's windows 
@@ -383,6 +384,7 @@ namespace MSBuildTasks
             osPlatform = isLinux ? OSPlatform.Linux : osPlatform; 
             return osPlatform; 
         } 
+        #endif
     }
 
 }
