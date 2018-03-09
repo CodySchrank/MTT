@@ -123,12 +123,7 @@ namespace MSBuildTasks
         }
 
         private void AddModel(string file, string structure = "") {       
-            if(isWindows()) {
-                file = file.Replace('\\','/');
-                structure = structure.Replace('\\', '/');
-            }
-
-            string[] explodedDir = file.Split('/');
+            string[] explodedDir = file.Split(Path.DirectorySeparatorChar);
 
             string fileName = explodedDir[explodedDir.Length - 1];
 
@@ -362,29 +357,29 @@ namespace MSBuildTasks
             return userDefinedImport;
         }
 
-        private bool isWindows() {
-            #if NET46
-                return Environment.OSVersion.Version.Major == 6.2 || Environment.OSVersion.Version.Major == 6.3; //doesn't detect all windows but blame net46
-            #else
-                return GetOSPlatform() == OSPlatform.Windows;
-            #endif
-        }
+        // private bool isWindows() {
+        //     #if NET46
+        //         return Environment.OSVersion.Version.Major == 6.2 || Environment.OSVersion.Version.Major == 6.3; //doesn't detect all windows but blame net46
+        //     #else
+        //         return GetOSPlatform() == OSPlatform.Windows;
+        //     #endif
+        // }
         
-        #if !NET46
-        private OSPlatform GetOSPlatform() { 
-            OSPlatform osPlatform = OSPlatform.Create("Other Platform"); 
-            // Check if it's windows 
-            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows); 
-            osPlatform = isWindows ? OSPlatform.Windows : osPlatform; 
-            // Check if it's osx 
-            bool isOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX); 
-            osPlatform = isOSX ? OSPlatform.OSX : osPlatform; 
-            // Check if it's Linux 
-            bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux); 
-            osPlatform = isLinux ? OSPlatform.Linux : osPlatform; 
-            return osPlatform; 
-        } 
-        #endif
+        // #if !NET46
+        // private OSPlatform GetOSPlatform() { 
+        //     OSPlatform osPlatform = OSPlatform.Create("Other Platform"); 
+        //     // Check if it's windows 
+        //     bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows); 
+        //     osPlatform = isWindows ? OSPlatform.Windows : osPlatform; 
+        //     // Check if it's osx 
+        //     bool isOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX); 
+        //     osPlatform = isOSX ? OSPlatform.OSX : osPlatform; 
+        //     // Check if it's Linux 
+        //     bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux); 
+        //     osPlatform = isLinux ? OSPlatform.Linux : osPlatform; 
+        //     return osPlatform; 
+        // } 
+        // #endif
     }
 
 }
