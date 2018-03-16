@@ -329,11 +329,11 @@ namespace MSBuildTasks
         private bool CheckIsArray(string type)
         {
             return type.Contains("[]") || 
-            type.Contains("ICollection") || 
-            type.Contains("IEnumerable") ||
-            type.Contains("Array") ||
-            type.Contains("Enumerable") ||
-            type.Contains("Collection");
+                type.Contains("ICollection") || 
+                type.Contains("IEnumerable") ||
+                type.Contains("Array") ||
+                type.Contains("Enumerable") ||
+                type.Contains("Collection");
         }
 
         private string CleanType(string type) {
@@ -355,7 +355,8 @@ namespace MSBuildTasks
                 .Replace("static", String.Empty)
                 .Replace("const", String.Empty)
                 .Replace("readonly", String.Empty)
-                .Trim().Split(' ');
+                .Trim()
+                .Split(' ');
         }
 
         private string Find(string query, ModelFile file) {
