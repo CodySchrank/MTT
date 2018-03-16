@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MTT" Version="0.3.1" PrivateAssets="All" />
+    <PackageReference Include="MTT" Version="0.3.3" />
   </ItemGroup>
 
   <Target Name="Convert" BeforeTargets="PrepareForBuild">
