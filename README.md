@@ -94,7 +94,19 @@ It correctly converts the following C# types to the equivalent typescript:
 * ushort            
 * bool
 * string
+* Boolean
+* Byte
+* Char
 * DateTime
+* Decimal
+* Double
+* Int16
+* Int32
+* Int64
+* SByte
+* UInt16
+* UInt32
+* UInt64
 * IEnumerable
 * ICollection
 

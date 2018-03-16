@@ -199,12 +199,28 @@ namespace MSBuildTasks
                 case "ulong":
                 case "short":
                 case "ushort":
+                case "Byte":
+                case "Decimal":
+                case "Double":
+                case "Int16":
+                case "Int32":
+                case "Int64":
+                case "SByte":
+                case "UInt16":
+                case "UInt32":
+                case "UInt64":
                 return "number";
                 
                 case "bool":
+                case "Boolean":
                 return "boolean";
 
                 case "string":
+                case "char":
+                case "String":
+                case "Char":
+                
+
                 return "string";
 
                 case "DateTime":
