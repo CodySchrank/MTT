@@ -219,8 +219,6 @@ namespace MSBuildTasks
                 case "char":
                 case "String":
                 case "Char":
-                
-
                 return "string";
 
                 case "DateTime":
@@ -330,7 +328,12 @@ namespace MSBuildTasks
 
         private bool CheckIsArray(string type)
         {
-            return type.Contains("[]") || type.Contains("ICollection") || type.Contains("IEnumerable");
+            return type.Contains("[]") || 
+            type.Contains("ICollection") || 
+            type.Contains("IEnumerable") ||
+            type.Contains("Array") ||
+            type.Contains("Enumerable") ||
+            type.Contains("Collection");
         }
 
         private string CleanType(string type) {

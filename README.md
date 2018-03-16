@@ -81,19 +81,19 @@ export interface Vehicle extends Entity {
 ## Types
 It correctly converts the following C# types to the equivalent typescript:
 
+* bool
 * byte
-* sbyte
 * decimal
 * double
 * float
 * int
 * uint
 * long
-* ulong
-* short
-* ushort            
-* bool
+* sbyte   
+* short       
 * string
+* ulong
+* ushort  
 * Boolean
 * Byte
 * Char
@@ -107,6 +107,9 @@ It correctly converts the following C# types to the equivalent typescript:
 * UInt16
 * UInt32
 * UInt64
+* Array
+* Collection
+* Enumerbale
 * IEnumerable
 * ICollection
 
