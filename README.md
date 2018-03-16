@@ -39,33 +39,43 @@
 </Project>
 ```
 
-#### KingdomResource.cs
+#### Vehicle.cs
 ```
-using Example.Resources.Types;
+using System.Collections.Generic;
+using Example.Resources.Parts;
 
-namespace Example.Resources
+namespace Example.Resources.Vehicles
 {
-    public class KingdomResource
+    public class Vehicle : Entity
     {
-        public int Heirarchy { get; set; }
-        public Cat Cat { get; set; }
-        public Dog Dog { get; set; }
+        public VehicleMake Make { get; set; }
+
+        public VehicleModel Model { get; set; }
+
+        public VehicleYear Year { get; set; }
+
+        public ICollection<VehiclePart> Parts { get; set; }
     }
 }
 ```
 
-#### kingdomResource.ts
+#### vehicle.ts
 ```
 /* Auto Generated */
 
-import { Cat } from "./Types/cat"
-import { Dog } from "./Types/dog"
+import { Entity } from "../entity"
+import { VehicleMake } from "./vehicleMake"
+import { VehicleModel } from "./vehicleModel"
+import { VehicleYear } from "./vehicleYear"
+import { VehiclePart } from "../Parts/vehiclePart"
 
-export interface KingdomResource {
-	heirarchy: number;
-	cat: Cat;
-	dog: Dog;
+export interface Vehicle extends Entity {
+	make: VehicleMake;
+	model: VehicleModel;
+	year: VehicleYear;
+	parts: VehiclePart[];
 }
+
 ```
 
 ## Types
