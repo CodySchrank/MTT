@@ -362,8 +362,6 @@ namespace MSBuildTasks
         private string Find(string query, ModelFile file) {
             string userDefinedImport = null;
 
-            Log.LogMessage(LoggingImportance, query + " " + file.Name + " " + file.Structure);
-
             foreach (var f in Models)
             {
                 if (f.Name.Equals(query))
