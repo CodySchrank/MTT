@@ -122,8 +122,9 @@ namespace MSBuildTasks
             }
         }
 
-        private void AddModel(string file, string structure = "") {       
-            string[] explodedDir = file.Split(Path.DirectorySeparatorChar);
+        private void AddModel(string file, string structure = "") {
+            structure = structure.Replace(@"\", "/");
+            string[] explodedDir = file.Replace(@"\", "/").Split('/');
 
             string fileName = explodedDir[explodedDir.Length - 1];
 

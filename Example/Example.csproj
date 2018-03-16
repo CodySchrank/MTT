@@ -5,8 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
     <PackageReference Include="MTT" Version="0.3.3-*" PrivateAssets="All" />
     <!-- <PackageReference Include="MTT" Version="0.3.2"/> -->
+=======
+    <!-- <PackageReference Include="MTT" Version="0.3.2-*" PrivateAssets="All" /> -->
+    <PackageReference Include="MTT" Version="0.3.2"/>
+>>>>>>> e9289e032dc587bf1f547621d83767f4c8f9e6d4
   </ItemGroup>
 
   <Target Name="ConvertMain" BeforeTargets="PrepareForBuild">
