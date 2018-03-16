@@ -10,12 +10,12 @@
     <!-- Change the default location where NuGet will put the build output -->
     <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
     <!-- set the version automatically -->
-    <VersionPrefix>0.3.2</VersionPrefix>
+    <VersionPrefix>0.3.3</VersionPrefix>
     <!-- 
         The suffix is required because nuget will only update if the package is newer, this tricks it. 
         note: 0.1.5 has precedence over 0.1.5-build123412341  
     -->
-    <!-- <VersionSuffix>build$([System.DateTime]::Now.ToString('yyyyMMddHHmmss'))</VersionSuffix> -->
+    <VersionSuffix>build$([System.DateTime]::Now.ToString('yyyyMMddHHmmss'))</VersionSuffix>
     <Title>C# Models To Typescript</Title>
     <Authors>Cody Schrank</Authors>
     <Description>Converts C# DTOs to Typescript using MSBUILD Tasks.</Description>

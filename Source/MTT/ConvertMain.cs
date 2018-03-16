@@ -151,6 +151,11 @@ namespace MSBuildTasks
                         string inheritance = modLine[modLine.Length - 1];
                         file.Inherits = inheritance;
                         file.InheritenceStructure = Find(inheritance, file);
+
+
+                        /** If the class only contains inheritence we need a place holder obj */
+                        LineObject obj = new LineObject() {};
+                        file.Objects.Add(obj);
                     } 
                     
                     if(line.Contains("public") && !line.Contains("class") && !IsContructor(line)) {
@@ -266,14 +271,16 @@ namespace MSBuildTasks
                             
                             foreach (var obj in file.Objects)
                             {
-                                var str = 
-                                    ToCamelCase(obj.VariableName) 
-                                    + ": " 
-                                    + obj.Type 
-                                    + (obj.IsArray ? "[]" : String.Empty) 
-                                    + ";";
+                                if(!String.IsNullOrEmpty(obj.VariableName)) {  //not an empty obj
+                                    var str = 
+                                        ToCamelCase(obj.VariableName) 
+                                        + ": " 
+                                        + obj.Type 
+                                        + (obj.IsArray ? "[]" : String.Empty) 
+                                        + ";";
 
-                                f.WriteLine("\t" + str);
+                                    f.WriteLine("\t" + str);
+                                }
                             }
                             f.WriteLine("}");
                         }
@@ -334,6 +341,8 @@ namespace MSBuildTasks
         private string Find(string query, ModelFile file) {
             string userDefinedImport = null;
 
+            Log.LogMessage(LoggingImportance, query + " " + file.Name + " " + file.Structure);
+
             foreach (var f in Models)
             {
                 if (f.Name.Equals(query))
@@ -344,11 +353,13 @@ namespace MSBuildTasks
                     }
                     else if (String.IsNullOrEmpty(file.Structure))
                     {
-                        userDefinedImport = "./" + f.Structure + "/" + ToCamelCase(query);  //top level
-                    }
-                    else
+                        userDefinedImport = "./" + f.Structure + "/" + ToCamelCase(query);  //top dir to lower dir
+                    } else if(string.IsNullOrEmpty(f.Structure))
                     {
-                        userDefinedImport = "../" + f.Structure + "/" + ToCamelCase(query); //different dir
+                        userDefinedImport = "../" + ToCamelCase(query); //different dir to top dir
+                    } else 
+                    {
+                        userDefinedImport = "../" + f.Structure + "/" + ToCamelCase(query);  //different dir to different dir
                     }
 
                 }
