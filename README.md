@@ -19,7 +19,7 @@ MTT generates TypeScript interfaces from .NET DTOs. It implements most major fea
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MTT" Version="0.3.3" />
+    <PackageReference Include="MTT" Version="0.4.0"/>
   </ItemGroup>
 
   <Target Name="Convert" BeforeTargets="PrepareForBuild">
