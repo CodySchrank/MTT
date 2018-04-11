@@ -13,12 +13,17 @@ namespace MTT
 
         public string InheritenceStructure { get; set; }
 
+        public bool IsEnum { get; set; }
+
         public List<LineObject> Objects { get; set; }
+
+        public List<EnumObject> EnumObjects { get; set; }
 
         public string Structure { get; set; }
 
         public ModelFile() {
             Objects = new List<LineObject>();
+            EnumObjects = new List<EnumObject>();
         }
 
         public string PrintBasic() {

@@ -11,6 +11,10 @@ namespace Example.Resources.Vehicles
 
         public VehicleYear Year { get; set; }
 
+        public VehicleState Condition { get; set; }
+
+        public string Description { get; set; }
+
         public ICollection<VehiclePart> Parts { get; set; }
     }
 }

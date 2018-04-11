@@ -1,16 +1,6 @@
-# Models To Typescript
+# C# DTOs to Typescript Interfaces
 
--- Converts c# classes to typescript interfaces
-
--- Only looks for public properties
-
--- Ignores c# constructors
-
--- Applies Inheritence
-
--- Imports all required dependencies for typescript models
-
--- Matches the directory structure of the dto's, however it only checks 1 lower directory from *Working Directory*
+MTT generates TypeScript interfaces from .NET DTOs. It implements most major features of the current TypeScript specification.  This utility could be preferred over some others as it is completely independent of your IDE or workflow, because it uses a MSBUILD task and converts the code directly from the source.
 
 ## Options
 *WorkingDirectory* is the input directory of the cs dtos
@@ -46,14 +36,13 @@ using Example.Resources.Parts;
 
 namespace Example.Resources.Vehicles
 {
-    public class Vehicle : Entity
+    public class Vehicle : Entity 
     {
         public VehicleMake Make { get; set; }
-
         public VehicleModel Model { get; set; }
-
         public VehicleYear Year { get; set; }
-
+        public VehicleState Condition { get; set; }  //this is an enum<int>
+        public string Description { get; set; }
         public ICollection<VehiclePart> Parts { get; set; }
     }
 }
@@ -67,15 +56,17 @@ import { Entity } from "../entity"
 import { VehicleMake } from "./vehicleMake"
 import { VehicleModel } from "./vehicleModel"
 import { VehicleYear } from "./vehicleYear"
+import { VehicleState } from "./vehicleState"
 import { VehiclePart } from "../Parts/vehiclePart"
 
 export interface Vehicle extends Entity {
 	make: VehicleMake;
 	model: VehicleModel;
 	year: VehicleYear;
+	condition: VehicleState;
+	description: string;
 	parts: VehiclePart[];
 }
-
 ```
 
 ## Types
@@ -112,12 +103,24 @@ It correctly converts the following C# types to the equivalent typescript:
 * Enumerbale
 * IEnumerable
 * ICollection
+* Enum<int>
 
 ## Notes
 **If a *Convert Directory* is supplied, it will be deleted everytime script is ran and will be remade**
 
+
+Matches the directory structure of the dto's, however it only checks 1 lower directory from Working Directory
+
+
+Since javascript does not have an enum, but typescript does, only enums of type int will be supported for simplicity.
+
+Read more about typescript enums [here](https://www.typescriptlang.org/docs/handbook/enums.html)
+
+
 Tested on Windows 10 and macOS High Sierra
 
+
 Follows the case and naming conventions of each language.
+
 
 Thanks to natemcmaster [this project](https://github.com/natemcmaster/msbuild-tasks) really helped me out!
