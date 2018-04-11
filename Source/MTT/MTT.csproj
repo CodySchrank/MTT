@@ -16,7 +16,7 @@
         note: 0.1.5 has precedence over 0.1.5-build123412341  
     -->
     <!-- <VersionSuffix>build$([System.DateTime]::Now.ToString('yyyyMMddHHmmss'))</VersionSuffix> -->
-    <Title>C# Models To Typescript</Title>
+    <Title>C# DTOs To Typescript</Title>
     <Authors>Cody Schrank</Authors>
     <Description>Converts C# DTOs to Typescript using MSBUILD Tasks.</Description>
     <PackageProjectUrl>https://github.com/CodySchrank/MTT</PackageProjectUrl>
