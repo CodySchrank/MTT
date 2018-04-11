@@ -2,6 +2,12 @@
 
 MTT generates TypeScript interfaces from .NET DTOs. It implements most major features of the current TypeScript specification.  This utility could be preferred over some others as it is completely independent of your IDE or workflow, because it uses a MSBUILD task and converts the code directly from the source.
 
+## Install
+Using dotnet CLI:
+`dotnet add package MTT`
+
+Then in .csproj add a Target.
+
 ## Options
 *WorkingDirectory* is the input directory of the cs dtos
 
