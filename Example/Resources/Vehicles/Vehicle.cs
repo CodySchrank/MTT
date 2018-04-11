@@ -3,7 +3,7 @@ using Example.Resources.Parts;
 
 namespace Example.Resources.Vehicles
 {
-    public class Vehicle : Entity
+    public class Vehicle : Entity 
     {
         public VehicleMake Make { get; set; }
 
