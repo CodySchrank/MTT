@@ -109,7 +109,7 @@ It correctly converts the following C# types to the equivalent typescript:
 * Enumerbale
 * IEnumerable
 * ICollection
-* Enum<int>
+* Enum
 
 ## Notes
 **If a *Convert Directory* is supplied, it will be deleted everytime script is ran and will be remade**
