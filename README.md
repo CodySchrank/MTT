@@ -4,7 +4,10 @@ MTT generates TypeScript interfaces from .NET DTOs. It implements most major fea
 
 ## Install
 Using dotnet CLI:
+
 `dotnet add package MTT`
+
+`dotnet restore`
 
 Then in .csproj add a Target.
 
@@ -25,7 +28,7 @@ Then in .csproj add a Target.
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MTT" Version="0.4.0"/>
+    <PackageReference Include="MTT" Version="0.4.1"/>
   </ItemGroup>
 
   <Target Name="Convert" BeforeTargets="PrepareForBuild">
