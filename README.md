@@ -28,7 +28,7 @@ Then in .csproj add a Target.
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MTT" Version="0.4.1"/>
+    <PackageReference Include="MTT" Version="0.4.3"/>
   </ItemGroup>
 
   <Target Name="Convert" BeforeTargets="PrepareForBuild">
