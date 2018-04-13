@@ -315,7 +315,7 @@ namespace MSBuildTasks
                                             + ( obj.IsImplicit ? "" : (" = " + obj.Value) )
                                             + ",";
 
-                                        f.WriteLine("\t" + str);
+                                        f.WriteLine("    " + str);
                                     }
                                 }
 
@@ -368,7 +368,7 @@ namespace MSBuildTasks
                                             + (obj.IsArray ? "[]" : String.Empty) 
                                             + ";";
 
-                                        f.WriteLine("\t" + str);
+                                        f.WriteLine("    " + str);
                                     }
                                 }
                                 f.WriteLine("}");
