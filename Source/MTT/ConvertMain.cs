@@ -62,7 +62,7 @@ namespace MSBuildTasks
             if(!Directory.Exists(localdir)) {
                 Log.LogError("Working Directory does not exist {0}, creating..", localdir);
                 Directory.CreateDirectory(localdir).Create();
-                LocalWorkingDir = localdir;
+                LocalConvertDir = localdir;
                 return;
             }
 
