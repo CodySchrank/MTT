@@ -18,7 +18,7 @@
     <!-- <VersionSuffix>build$([System.DateTime]::Now.ToString('yyyyMMddHHmmss'))</VersionSuffix> -->
     <Title>C# DTOs To Typescript</Title>
     <Authors>Cody Schrank</Authors>
-    <Description>Converts C# DTOs to Typescript using MSBUILD Tasks.</Description>
+    <Description>Converts C# DTOs to Typescript interfaces using MSBUILD Tasks.</Description>
     <PackageProjectUrl>https://github.com/CodySchrank/MTT</PackageProjectUrl>
   </PropertyGroup>
 
