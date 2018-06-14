@@ -1,6 +1,6 @@
 namespace Example.Resources.Vehicles
 {
-    public enum VehicleState: int
+    public enum VehicleState: int 
     {
         Broken = 1,
 
