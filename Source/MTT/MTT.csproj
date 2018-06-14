@@ -16,9 +16,9 @@
         note: 0.1.5 has precedence over 0.1.5-build123412341  
     -->
     <!-- <VersionSuffix>build$([System.DateTime]::Now.ToString('yyyyMMddHHmmss'))</VersionSuffix> -->
-    <Title>C# DTOs To Typescript</Title>
+    <Title>C# DTOs To Typescript Interfaces</Title>
     <Authors>Cody Schrank</Authors>
-    <Description>Converts C# DTOs to Typescript interfaces using MSBUILD Tasks.</Description>
+    <Description>Converts C# DTOs to Typescript Interfaces using MSBUILD Tasks.</Description>
     <PackageProjectUrl>https://github.com/CodySchrank/MTT</PackageProjectUrl>
   </PropertyGroup>
 
