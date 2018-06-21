@@ -123,6 +123,7 @@ It correctly converts the following C# types to the equivalent typescript:
 *   IEnumerable
 *   ICollection
 *   Enum
+*   Optional
 
 ## Notes
 
