@@ -222,6 +222,8 @@ namespace MSBuildTasks
                         string type = modLine[0];
 
                         bool IsArray = CheckIsArray(type);
+
+                        bool isOptional = CheckOptional(type);
                         
                         type = CleanType(type);
 
@@ -234,6 +236,7 @@ namespace MSBuildTasks
                             VariableName = varName,
                             Type = isUserDefined ? type : TypeOf(type),
                             IsArray = IsArray,
+                            IsOptional = isOptional,
                             UserDefined = isUserDefined,
                             UserDefinedImport = userDefinedImport
                         };
@@ -374,6 +377,7 @@ namespace MSBuildTasks
                                     if(!String.IsNullOrEmpty(obj.VariableName)) {  //not an empty obj
                                         var str = 
                                             ToCamelCase(obj.VariableName) 
+                                            + (obj.IsOptional ? "?" : String.Empty)
                                             + ": " 
                                             + obj.Type 
                                             + (obj.IsArray ? "[]" : String.Empty) 
@@ -423,8 +427,14 @@ namespace MSBuildTasks
                 type.Contains("Collection");
         }
 
+        private bool CheckOptional(string type)
+        {
+            return type.Contains("?");
+        }
+
         private string CleanType(string type) {
-            return type.Replace("[]", String.Empty)
+            return type.Replace("?", String.Empty)
+                .Replace("[]", String.Empty)
                 .Replace("ICollection", String.Empty)
                 .Replace("IEnumerable", String.Empty)
                 .Replace("<", String.Empty)

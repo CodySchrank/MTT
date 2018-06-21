@@ -5,6 +5,7 @@ namespace MTT
         public string VariableName { get; set; }
         public string Type { get; set; }
         public bool IsArray { get; set; }
+        public bool IsOptional { get; set; }
         public bool UserDefined { get; set; }
         public string UserDefinedImport { get; set; }
     }
