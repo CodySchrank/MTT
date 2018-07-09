@@ -10,7 +10,7 @@
     <!-- Change the default location where NuGet will put the build output -->
     <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
     <!-- set the version automatically -->
-    <VersionPrefix>0.4.5</VersionPrefix>
+    <VersionPrefix>0.4.6</VersionPrefix>
     <!-- 
         The suffix is required because nuget will only update if the package is newer, this tricks it. 
         note: 0.1.5 has precedence over 0.1.5-build123412341  
