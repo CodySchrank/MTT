@@ -66,7 +66,7 @@ namespace MSBuildTasks
             var localdir = Path.Combine(dir, WorkingDirectory);
 
             if(!Directory.Exists(localdir)) {
-                Log.LogError("Working Directory does not exist {0}, creating..", localdir);
+                Log.LogMessage("Working Directory does not exist {0}, creating..", localdir);
                 Directory.CreateDirectory(localdir).Create();
                 LocalConvertDir = localdir;
                 return;
@@ -91,7 +91,7 @@ namespace MSBuildTasks
 
             if (!Directory.Exists(localdir))
             {
-                Log.LogError("Convert Directory does not exist {0}, creating..", localdir);
+                Log.LogMessage("Convert Directory does not exist {0}, creating..", localdir);
             } else {
                 Log.LogMessage(LoggingImportance, "Using User Directory {0}", localdir);
                 Directory.Delete(localdir, true);
