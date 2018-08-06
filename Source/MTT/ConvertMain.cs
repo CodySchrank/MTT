@@ -154,7 +154,7 @@ namespace MSBuildTasks
                 {
                     var line = StripComments(_line);
 
-                    string[] modLine = ExplodeLine(line);
+                    var modLine = new List<string>(ExplodeLine(line));
 
                     if ( (line.Contains("enum") && line.Contains("{")) || (line.Contains("class") && line.Contains("{")) ) {
                         throw new ArgumentException(string.Format("For parsing, C# DTO's must use curly braces on the next line\nin {0}.cs\n\"{1}\"", file.Name, _line));
@@ -162,8 +162,8 @@ namespace MSBuildTasks
 
                     if (line.Contains("enum"))  //enum declaration
                     {
-                        if(modLine.Length > 2) {
-                            file.Inherits = modLine[modLine.Length - 1];
+                        if(modLine.Count > 2) {
+                            file.Inherits = modLine[modLine.Count - 1];
                         }
                         
                         file.IsEnum = true;
@@ -173,13 +173,13 @@ namespace MSBuildTasks
                         
                         foreach (var enumLine in file.Info)
                         {
-                            modLine = ExplodeLine(enumLine);
+                            modLine = new List<string>(ExplodeLine(enumLine));
 
                             if(!enumLine.Contains("enum") && !IsContructor(enumLine) && !enumLine.Contains("{") && !enumLine.Contains("}") && !String.IsNullOrWhiteSpace(enumLine) && !enumLine.Contains("namespace")) {
                                 String name = modLine[0];
                                 bool isImplicit = false;
 
-                                if(modLine.Length > 1 && modLine[1] == "=") {
+                                if(modLine.Count > 1 && modLine[1] == "=") {
                                     try
                                     {
                                         value = Int32.Parse(modLine[2].Replace(",", ""));
@@ -208,7 +208,7 @@ namespace MSBuildTasks
 
 
                     if(line.Contains("class") && line.Contains(":")) {  //class declaration 
-                        string inheritance = modLine[modLine.Length - 1];
+                        string inheritance = modLine[modLine.Count - 1];
                         file.Inherits = inheritance;
                         file.InheritenceStructure = Find(inheritance, file);
 
@@ -220,6 +220,12 @@ namespace MSBuildTasks
                     
                     if(line.Contains("public") && !line.Contains("class") && !IsContructor(line)) {  //class property
                         string type = modLine[0];
+                        /** If the property is marked virtual, skip the virtual keyword. */
+                        if (type.Equals("virtual"))
+                        {
+                            modLine.RemoveAt(0);
+                            type = modLine[0];
+                        }
 
                         bool IsArray = CheckIsArray(type);
 
