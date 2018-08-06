@@ -156,11 +156,13 @@ namespace MSBuildTasks
 
                     string[] modLine = ExplodeLine(line);
 
+                    // Check for correct structure
                     if ( (line.Contains("enum") && line.Contains("{")) || (line.Contains("class") && line.Contains("{")) ) {
                         throw new ArgumentException(string.Format("For parsing, C# DTO's must use curly braces on the next line\nin {0}.cs\n\"{1}\"", file.Name, _line));
                     }
 
-                    if (line.Contains("enum"))  //enum declaration
+                    // Enum declaration
+                    if (line.Contains("enum"))  
                     {
                         if(modLine.Length > 2) {
                             file.Inherits = modLine[modLine.Length - 1];
@@ -169,7 +171,6 @@ namespace MSBuildTasks
                         file.IsEnum = true;
                         
                         int value = 0;
-                        Action increment = () => { value++; };
                         
                         foreach (var enumLine in file.Info)
                         {
@@ -207,7 +208,8 @@ namespace MSBuildTasks
                     }
 
 
-                    if(line.Contains("class") && line.Contains(":")) {  //class declaration 
+                    // Class declaration 
+                    if(line.Contains("class") && line.Contains(":")) {  
                         string inheritance = modLine[modLine.Length - 1];
                         file.Inherits = inheritance;
                         file.InheritenceStructure = Find(inheritance, file);
@@ -218,7 +220,8 @@ namespace MSBuildTasks
                         file.Objects.Add(obj);
                     } 
                     
-                    if(line.Contains("public") && !line.Contains("class") && !IsContructor(line)) {  //class property
+                    // Class property
+                    if(line.Contains("public") && !line.Contains("class") && !IsContructor(line)) {  
                         string type = modLine[0];
 
                         bool IsArray = CheckIsArray(type);
