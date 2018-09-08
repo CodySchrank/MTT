@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net471</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <!-- makes this sample work when compiling on macOS and Linux because .NET Framework is not available -->
     <TargetFrameworks Condition="$(OS) != 'Windows_NT'">netstandard2.0</TargetFrameworks>
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\..\artifacts\</PackageOutputPath>
@@ -15,7 +15,7 @@
         The suffix is required because nuget will only update if the package is newer, this tricks it. 
         note: 0.1.5 has precedence over 0.1.5-build123412341  
     -->
-    <VersionSuffix>build$([System.DateTime]::Now.ToString('yyyyMMddHHmmss'))</VersionSuffix>
+    <!-- <VersionSuffix>build$([System.DateTime]::Now.ToString('yyyyMMddHHmmss'))</VersionSuffix> -->
     <Title>C# DTOs To Typescript Interfaces</Title>
     <Authors>Cody Schrank</Authors>
     <Description>Converts C# DTOs to Typescript Interfaces using MSBUILD Tasks.</Description>
@@ -30,7 +30,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" Version="15.1.1012" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.1012" />
-    <!-- <PackageReference Include="System.CodeDom" Version="4.5.0" /> -->
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.9.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.9.0" />
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <!-- Marks all packages as 'local only' so they don't end up in the nuspec. -->
     <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
   </ItemGroup>

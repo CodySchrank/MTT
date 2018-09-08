@@ -3,12 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 using MSBuildTask = Microsoft.Build.Utilities.Task;
 using System.Reflection;
-using Microsoft.CSharp;
-using System.CodeDom.Compiler;
+using System.Runtime.Loader;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 
 namespace MSBuildTasks
 {
@@ -36,8 +39,6 @@ namespace MSBuildTasks
         private string LocalWorkingDir {get; set;}
 
         private string LocalConvertDir { get; set; }
-
-        // private CodeDomProvider compiler = CodeDomProvider.CreateProvider("CSharp");
 
         public ConvertMain() {
             Models = new List<ModelFile>();
@@ -79,7 +80,7 @@ namespace MSBuildTasks
                 return;
             }
 
-            Log.LogMessage(LoggingImportance, "Using User Directory {0}", localdir);
+            Log.LogMessage(LoggingImportance, "Working Directory {0}", localdir);
             LocalWorkingDir = localdir;
             return;
         }
@@ -100,7 +101,7 @@ namespace MSBuildTasks
             {
                 Log.LogMessage("Convert Directory does not exist {0}, creating..", localdir);
             } else {
-                Log.LogMessage(LoggingImportance, "Using User Directory {0}", localdir);
+                Log.LogMessage(LoggingImportance, "Convert Directory {0}", localdir);
                 Directory.Delete(localdir, true);
             }
 
@@ -133,22 +134,55 @@ namespace MSBuildTasks
             }
         }
 
+        private void Compile(string fileContents, string fileName) {
+            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContents);
+            
+            string assemblyName = Path.GetRandomFileName();
+            MetadataReference[] references = new MetadataReference[]
+            {
+                MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location)
+            };
+
+            Log.LogMessage(LoggingImportance, "Compiling {0}", fileName);
+            CSharpCompilation compilation = CSharpCompilation.Create(
+                assemblyName,
+                syntaxTrees: new[] { syntaxTree },
+                references: references,
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+    
+            using (var ms = new MemoryStream())
+            {
+                EmitResult result = compilation.Emit(ms);
+
+                if (!result.Success)
+                {
+                    Log.LogError("Compilation failed!");
+                    IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => 
+                        diagnostic.IsWarningAsError || 
+                        diagnostic.Severity == DiagnosticSeverity.Error);
+
+                    foreach (Diagnostic diagnostic in failures)
+                    {
+                        Log.LogError("\t{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+                    }
+                }
+                else
+                {
+                    Log.LogMessage(LoggingImportance, "Compilation successful! Now instantiating and executing the code ...");
+                    ms.Seek(0, SeekOrigin.Begin);
+                    
+                    Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
+                }
+            }
+        }
+
         private void AddModel(string file, string structure = "") {
-            // CompilerParameters cp = new CompilerParameters();
-            // cp.GenerateExecutable = false;
-            // cp.GenerateInMemory = true;
-
-            // CompilerResults cr = compiler.CompileAssemblyFromFile(cp, file);
-
-            // Log.LogMessage(LoggingImportance,"ERROS {0}", cr.Errors.Count);
-
-            // Assembly asm = Assembly.LoadFile(file);
-
-
             structure = structure.Replace(@"\", "/");
             string[] explodedDir = file.Replace(@"\", "/").Split('/');
 
             string fileName = explodedDir[explodedDir.Length - 1];
+    
+            // Compile(File.ReadAllText(file), fileName);
 
             string[] fileInfo = File.ReadAllLines(file);
 
