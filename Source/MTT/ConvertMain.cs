@@ -1,7 +1,6 @@
 using MTT;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Text;
 using System.Linq;
@@ -9,9 +8,9 @@ using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 using MSBuildTask = Microsoft.Build.Utilities.Task;
 using System.Reflection;
-using System.Runtime.Loader;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
+using System.Runtime.Loader;
 using Microsoft.CodeAnalysis.Emit;
 
 namespace MSBuildTasks
@@ -35,13 +34,14 @@ namespace MSBuildTasks
 
         protected MessageImportance LoggingImportance { get; } = MessageImportance.High;  //If its not high then there are no logs
 
-        private List<ModelFile> Models {get; set;}
+        private List<ModelFile> Models { get; set; }
 
-        private string LocalWorkingDir {get; set;}
+        private string LocalWorkingDir { get; set; }
 
         private string LocalConvertDir { get; set; }
 
-        public ConvertMain() {
+        public ConvertMain()
+        {
             Models = new List<ModelFile>();
         }
 
@@ -52,9 +52,12 @@ namespace MSBuildTasks
             GetConvertDirectory();
             LoadModels();
 
-            try {
+            try
+            {
                 BreakDown();
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 throw e;
             }
 
@@ -63,10 +66,12 @@ namespace MSBuildTasks
             return true;
         }
 
-        private void GetWorkingDirectory() {
+        private void GetWorkingDirectory()
+        {
             var dir = Directory.GetCurrentDirectory();
 
-            if(string.IsNullOrEmpty(WorkingDirectory)) {
+            if (string.IsNullOrEmpty(WorkingDirectory))
+            {
                 Log.LogMessage(LoggingImportance, "Using Default Working Directory {0}", dir);
                 LocalWorkingDir = dir;
                 return;
@@ -74,7 +79,8 @@ namespace MSBuildTasks
 
             var localdir = Path.Combine(dir, WorkingDirectory);
 
-            if(!Directory.Exists(localdir)) {
+            if (!Directory.Exists(localdir))
+            {
                 Log.LogMessage("Working Directory does not exist {0}, creating..", localdir);
                 Directory.CreateDirectory(localdir).Create();
                 LocalConvertDir = localdir;
@@ -86,7 +92,8 @@ namespace MSBuildTasks
             return;
         }
 
-        private void GetConvertDirectory() {
+        private void GetConvertDirectory()
+        {
             var dir = Directory.GetCurrentDirectory();
 
             if (string.IsNullOrEmpty(ConvertDirectory))
@@ -101,7 +108,9 @@ namespace MSBuildTasks
             if (!Directory.Exists(localdir))
             {
                 Log.LogMessage("Convert Directory does not exist {0}, creating..", localdir);
-            } else {
+            }
+            else
+            {
                 Log.LogMessage(LoggingImportance, "Convert Directory {0}", localdir);
                 Directory.Delete(localdir, true);
             }
@@ -111,8 +120,10 @@ namespace MSBuildTasks
             return;
         }
 
-        private void LoadModels(string dirname = "") {
-            if(String.IsNullOrEmpty(dirname)) {
+        private void LoadModels(string dirname = "")
+        {
+            if (String.IsNullOrEmpty(dirname))
+            {
                 dirname = LocalWorkingDir;
             }
 
@@ -123,7 +134,7 @@ namespace MSBuildTasks
             {
                 string d = dir.Replace(dirname, String.Empty);
 
-                if(!String.IsNullOrEmpty(d))
+                if (!String.IsNullOrEmpty(d))
                 {
                     LoadModels(dir);
                 }
@@ -135,7 +146,9 @@ namespace MSBuildTasks
             }
         }
 
-        private void Compile(string fileContents, string fileName) {
+        private void Compile(string fileContents, string fileName)
+        {            
+            // Write("Parsing the code into the SyntaxTree");
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContents);
             
             string assemblyName = Path.GetRandomFileName();
@@ -144,7 +157,7 @@ namespace MSBuildTasks
                 MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location)
             };
 
-            Log.LogMessage(LoggingImportance, "Compiling {0}", fileName);
+            // Write("Compiling ...");
             CSharpCompilation compilation = CSharpCompilation.Create(
                 assemblyName,
                 syntaxTrees: new[] { syntaxTree },
@@ -157,32 +170,35 @@ namespace MSBuildTasks
 
                 if (!result.Success)
                 {
-                    Log.LogError("Compilation failed!");
+                    // Write("Compilation failed!");
                     IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => 
                         diagnostic.IsWarningAsError || 
                         diagnostic.Severity == DiagnosticSeverity.Error);
 
                     foreach (Diagnostic diagnostic in failures)
                     {
-                        Log.LogError("\t{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+                        Console.Error.WriteLine("\t{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
                     }
                 }
                 else
                 {
-                    Log.LogMessage(LoggingImportance, "Compilation successful! Now instantiating and executing the code ...");
+                    // Write("Compilation successful! Now instantiating and executing the code ...");
                     ms.Seek(0, SeekOrigin.Begin);
                     
                     Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
+                    
+                    Log.LogMessage(LoggingImportance, "Parsed Assembly");
                 }
             }
         }
 
-        private void AddModel(string file, string structure = "") {
+        private void AddModel(string file, string structure = "")
+        {
             structure = structure.Replace(@"\", "/");
             string[] explodedDir = file.Replace(@"\", "/").Split('/');
 
             string fileName = explodedDir[explodedDir.Length - 1];
-    
+
             Compile(File.ReadAllText(file), fileName);
 
             string[] fileInfo = File.ReadAllLines(file);
@@ -198,7 +214,8 @@ namespace MSBuildTasks
         }
 
 
-        private void BreakDown() {
+        private void BreakDown()
+        {
             foreach (var file in Models)
             {
                 foreach (var _line in file.Info)
@@ -208,30 +225,34 @@ namespace MSBuildTasks
                     var modLine = new List<string>(ExplodeLine(line));
 
                     // Check for correct structure
-                    if ( (line.Contains("enum") && line.Contains("{")) || (line.Contains("class") && line.Contains("{")) ) {
+                    if ((line.Contains("enum") && line.Contains("{")) || (line.Contains("class") && line.Contains("{")))
+                    {
                         throw new ArgumentException(string.Format("For parsing, C# DTO's must use curly braces on the next line\nin {0}.cs\n\"{1}\"", file.Name, _line));
                     }
 
                     // Enum declaration
-                    if (line.Contains("enum"))  
+                    if (line.Contains("enum"))
                     {
-                        if(modLine.Count > 2) {
+                        if (modLine.Count > 2)
+                        {
                             file.Inherits = modLine[modLine.Count - 1];
                         }
-                        
+
                         file.IsEnum = true;
-                        
+
                         int value = 0;
-                        
+
                         foreach (var enumLine in file.Info)
                         {
                             modLine = new List<string>(ExplodeLine(enumLine));
 
-                            if(!enumLine.Contains("enum") && !IsContructor(enumLine) && !enumLine.Contains("{") && !enumLine.Contains("}") && !String.IsNullOrWhiteSpace(enumLine) && !enumLine.Contains("namespace")) {
+                            if (!enumLine.Contains("enum") && !IsContructor(enumLine) && !enumLine.Contains("{") && !enumLine.Contains("}") && !String.IsNullOrWhiteSpace(enumLine) && !enumLine.Contains("namespace"))
+                            {
                                 String name = modLine[0];
                                 bool isImplicit = false;
 
-                                if(modLine.Count > 1 && modLine[1] == "=") {
+                                if (modLine.Count > 1 && modLine[1] == "=")
+                                {
                                     try
                                     {
                                         value = Int32.Parse(modLine[2].Replace(",", ""));
@@ -240,7 +261,9 @@ namespace MSBuildTasks
                                     {
                                         throw e;
                                     }
-                                } else {
+                                }
+                                else
+                                {
                                     isImplicit = true;
                                 }
 
@@ -260,19 +283,21 @@ namespace MSBuildTasks
 
 
                     // Class declaration
-                    if(line.Contains("class") && line.Contains(":")) {
+                    if (line.Contains("class") && line.Contains(":"))
+                    {
                         string inheritance = modLine[modLine.Count - 1];
                         file.Inherits = inheritance;
                         file.InheritenceStructure = Find(inheritance, file);
 
 
                         /** If the class only contains inheritence we need a place holder obj */
-                        LineObject obj = new LineObject() {};
+                        LineObject obj = new LineObject() { };
                         file.Objects.Add(obj);
-                    } 
-                    
+                    }
+
                     // Class property
-                    if(line.Contains("public") && !line.Contains("class") && !IsContructor(line)) {  
+                    if (line.Contains("public") && !line.Contains("class") && !IsContructor(line))
+                    {
                         string type = modLine[0];
                         /** If the property is marked virtual, skip the virtual keyword. */
                         if (type.Equals("virtual"))
@@ -284,7 +309,7 @@ namespace MSBuildTasks
                         bool IsArray = CheckIsArray(type);
 
                         bool isOptional = CheckOptional(type);
-                        
+
                         type = CleanType(type);
 
                         var userDefinedImport = Find(type, file);
@@ -292,7 +317,8 @@ namespace MSBuildTasks
 
                         string varName = modLine[1];
 
-                        LineObject obj = new LineObject() {
+                        LineObject obj = new LineObject()
+                        {
                             VariableName = varName,
                             Type = isUserDefined ? type : TypeOf(type),
                             IsArray = IsArray,
@@ -307,7 +333,8 @@ namespace MSBuildTasks
             }
         }
 
-        private string TypeOf(string type) {
+        private string TypeOf(string type)
+        {
             switch (type)
             {
                 case "byte":
@@ -331,26 +358,27 @@ namespace MSBuildTasks
                 case "UInt16":
                 case "UInt32":
                 case "UInt64":
-                return "number";
-                
+                    return "number";
+
                 case "bool":
                 case "Boolean":
-                return "boolean";
+                    return "boolean";
 
                 case "string":
                 case "char":
                 case "String":
                 case "Char":
-                return "string";
+                    return "string";
 
                 case "DateTime":
-                return "Date";
+                    return "Date";
 
                 default: return "any";
             }
         }
 
-        private void Convert() {
+        private void Convert()
+        {
             Log.LogMessage(LoggingImportance, "Converting..");
 
             foreach (var file in Models)
@@ -360,95 +388,103 @@ namespace MSBuildTasks
 
                 string fileName = ToCamelCase(file.Name + ".ts");
                 Log.LogMessage(LoggingImportance, "Creating file {0}", fileName);
-                string saveDir = Path.Combine(di.FullName,fileName);
-                
+                string saveDir = Path.Combine(di.FullName, fileName);
+
                 using (var stream = new FileStream(saveDir, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.SequentialScan))
                 using (StreamWriter f =
                     new StreamWriter(stream, System.Text.Encoding.UTF8, 1024, false))
-                        {   
-                            var importing = false;  //only used for formatting
-                            var imports = new List<string>();  //used for duplication
+                {
+                    var importing = false;  //only used for formatting
+                    var imports = new List<string>();  //used for duplication
 
-                            if(AutoGeneratedTag) f.WriteLine("/* Auto Generated */\n");
+                    if (AutoGeneratedTag) f.WriteLine("/* Auto Generated */\n");
 
-                            if(file.IsEnum) {
+                    if (file.IsEnum)
+                    {
 
-                                f.WriteLine(
-                                    "export enum "
-                                    + file.Name
-                                    // + (String.IsNullOrEmpty(file.Inherits) ? "" : (" : " + file.Inherits)) //typescript doesn't extend enums like c#
-                                    + " {"
-                                    );
+                        f.WriteLine(
+                            "export enum "
+                            + file.Name
+                            // + (String.IsNullOrEmpty(file.Inherits) ? "" : (" : " + file.Inherits)) //typescript doesn't extend enums like c#
+                            + " {"
+                            );
 
-                                foreach (var obj in file.EnumObjects)
-                                {
-                                    if (!String.IsNullOrEmpty(obj.Name))
-                                    {  //not an empty obj
-                                        var str =
-                                            ToCamelCase(obj.Name)
-                                            + ( obj.IsImplicit ? "" : (" = " + obj.Value) )
-                                            + ",";
+                        foreach (var obj in file.EnumObjects)
+                        {
+                            if (!String.IsNullOrEmpty(obj.Name))
+                            {  //not an empty obj
+                                var str =
+                                    ToCamelCase(obj.Name)
+                                    + (obj.IsImplicit ? "" : (" = " + obj.Value))
+                                    + ",";
 
-                                        f.WriteLine("    " + str);
-                                    }
-                                }
-
-                                f.WriteLine("}");
-
-                            } else {
-
-                                foreach (var obj in file.Objects)
-                                {
-                                    if(!String.IsNullOrEmpty(file.Inherits)) {
-                                        importing = true;
-                                        var import = "import { " + file.Inherits + " } from \"" + file.InheritenceStructure + "\"";
-
-                                        if (!imports.Contains(import))
-                                        {
-                                            f.WriteLine(import);
-                                            imports.Add(import);
-                                        }
-                                    }
-
-                                    if(obj.UserDefined) {
-                                        importing = true;
-                                        var import = "import { " + obj.Type + " } from \"" + obj.UserDefinedImport + "\"";
-
-                                        if(!imports.Contains(import)) {
-                                            f.WriteLine(import);
-                                            imports.Add(import);
-                                        }
-                                    }
-                                }
-
-                                if(importing) {
-                                    f.WriteLine("");
-                                }
-
-                                f.WriteLine(
-                                    "export interface " 
-                                    + file.Name 
-                                    + (String.IsNullOrEmpty(file.Inherits) ? "" : (" extends " + file.Inherits)) //if class has inheritance
-                                    + " {"
-                                    );
-                                
-                                foreach (var obj in file.Objects)
-                                {
-                                    if(!String.IsNullOrEmpty(obj.VariableName)) {  //not an empty obj
-                                        var str = 
-                                            ToCamelCase(obj.VariableName) 
-                                            + (obj.IsOptional ? "?" : String.Empty)
-                                            + ": " 
-                                            + obj.Type 
-                                            + (obj.IsArray ? "[]" : String.Empty) 
-                                            + ";";
-
-                                        f.WriteLine("    " + str);
-                                    }
-                                }
-                                f.WriteLine("}");
+                                f.WriteLine("    " + str);
                             }
                         }
+
+                        f.WriteLine("}");
+
+                    }
+                    else
+                    {
+
+                        foreach (var obj in file.Objects)
+                        {
+                            if (!String.IsNullOrEmpty(file.Inherits))
+                            {
+                                importing = true;
+                                var import = "import { " + file.Inherits + " } from \"" + file.InheritenceStructure + "\"";
+
+                                if (!imports.Contains(import))
+                                {
+                                    f.WriteLine(import);
+                                    imports.Add(import);
+                                }
+                            }
+
+                            if (obj.UserDefined)
+                            {
+                                importing = true;
+                                var import = "import { " + obj.Type + " } from \"" + obj.UserDefinedImport + "\"";
+
+                                if (!imports.Contains(import))
+                                {
+                                    f.WriteLine(import);
+                                    imports.Add(import);
+                                }
+                            }
+                        }
+
+                        if (importing)
+                        {
+                            f.WriteLine("");
+                        }
+
+                        f.WriteLine(
+                            "export interface "
+                            + file.Name
+                            + (String.IsNullOrEmpty(file.Inherits) ? "" : (" extends " + file.Inherits)) //if class has inheritance
+                            + " {"
+                            );
+
+                        foreach (var obj in file.Objects)
+                        {
+                            if (!String.IsNullOrEmpty(obj.VariableName))
+                            {  //not an empty obj
+                                var str =
+                                    ToCamelCase(obj.VariableName)
+                                    + (obj.IsOptional ? "?" : String.Empty)
+                                    + ": "
+                                    + obj.Type
+                                    + (obj.IsArray ? "[]" : String.Empty)
+                                    + ";";
+
+                                f.WriteLine("    " + str);
+                            }
+                        }
+                        f.WriteLine("}");
+                    }
+                }
             }
         }
 
@@ -461,16 +497,17 @@ namespace MSBuildTasks
 
             foreach (var c in str)
             {
-                if(Char.IsLetter(c) && Char.IsLower(c)) 
+                if (Char.IsLetter(c) && Char.IsLower(c))
                     isCaps = false;
             }
 
-            if(isCaps) return str.ToLower();
+            if (isCaps) return str.ToLower();
 
             return Char.ToLowerInvariant(str[0]) + str.Substring(1);
         }
 
-        private string ToPascalCase(string str) {
+        private string ToPascalCase(string str)
+        {
             if (String.IsNullOrEmpty(str) || Char.IsUpper(str, 0))
                 return str;
 
@@ -479,8 +516,8 @@ namespace MSBuildTasks
 
         private bool CheckIsArray(string type)
         {
-            return type.Contains("[]") || 
-                type.Contains("ICollection") || 
+            return type.Contains("[]") ||
+                type.Contains("ICollection") ||
                 type.Contains("IEnumerable") ||
                 type.Contains("Array") ||
                 type.Contains("Enumerable") ||
@@ -492,7 +529,8 @@ namespace MSBuildTasks
             return type.Contains("?");
         }
 
-        private string CleanType(string type) {
+        private string CleanType(string type)
+        {
             return type.Replace("?", String.Empty)
                 .Replace("[]", String.Empty)
                 .Replace("ICollection", String.Empty)
@@ -501,11 +539,13 @@ namespace MSBuildTasks
                 .Replace(">", String.Empty);
         }
 
-        private bool IsContructor(string line) {
+        private bool IsContructor(string line)
+        {
             return line.Contains("()") || ((line.Contains("(") && line.Contains(")")));
         }
 
-        private string[] ExplodeLine(string line) {
+        private string[] ExplodeLine(string line)
+        {
             var l = line;
             return l
                 .Replace("public", String.Empty)
@@ -516,48 +556,55 @@ namespace MSBuildTasks
                 .Split(' ');
         }
 
-        private string StripComments(string line) {
-            if(line.Contains("//")) {
-               line = line.Substring(0, line.IndexOf("//"));
+        private string StripComments(string line)
+        {
+            if (line.Contains("//"))
+            {
+                line = line.Substring(0, line.IndexOf("//"));
             }
 
             return line;
         }
 
-        private string GetRelativePath( string from, string to )
+        private string GetRelativePath(string from, string to)
         {
-            Uri path1 = new Uri(from.Replace("\\","/"));
-            Uri path2 = new Uri(to.Replace("\\","/"));
+            Uri path1 = new Uri(from.Replace("\\", "/"));
+            Uri path2 = new Uri(to.Replace("\\", "/"));
 
             var rel = path1.MakeRelativeUri(path2);
 
             return Uri.UnescapeDataString(rel.OriginalString);
         }
 
-        private string GetRelativePathFromLocalPath(string from, string to) {
+        private string GetRelativePathFromLocalPath(string from, string to)
+        {
             var path1 = Path.Combine(LocalWorkingDir, from);
             var path2 = Path.Combine(LocalWorkingDir, to);
-            path1 = path1.Replace("/","\\");
+            path1 = path1.Replace("/", "\\");
             path2 = path2.Replace("/", "\\");
 
-            if(!String.Equals(path1.Substring(path1.Length - 1),"\\")) {
+            if (!String.Equals(path1.Substring(path1.Length - 1), "\\"))
+            {
                 path1 = path1 + "\\";
             }
 
-            if(!String.Equals(path2.Substring(path2.Length - 1),"\\")) {
+            if (!String.Equals(path2.Substring(path2.Length - 1), "\\"))
+            {
                 path2 = path2 + "\\";
             }
 
-            var rel = GetRelativePath(path1, path2).Replace("\\","/");
+            var rel = GetRelativePath(path1, path2).Replace("\\", "/");
 
-            if(!String.Equals(rel.Substring(0),".")) {
+            if (!String.Equals(rel.Substring(0), "."))
+            {
                 rel = "./" + rel;
             }
 
             return rel;
         }
 
-        private string Find(string query, ModelFile file) {
+        private string Find(string query, ModelFile file)
+        {
             string userDefinedImport = null;
 
             foreach (var f in Models)
