@@ -487,16 +487,14 @@ namespace MSBuildTasks
             return line;
         }
 
-        [DllImport( "shlwapi.dll", EntryPoint = "PathRelativePathTo" )]
-        protected static extern bool PathRelativePathTo( StringBuilder lpszDst,
-        string from, UInt32 attrFrom,
-        string to, UInt32 attrTo );
-
         private string GetRelativePath( string from, string to )
         {
-            StringBuilder builder = new StringBuilder( 1024 );
-            bool result = PathRelativePathTo( builder, from, 0, to, 0 );
-            return builder.ToString();
+            Uri path1 = new Uri(from);
+            Uri path2 = new Uri(to);
+
+            var rel = path1.MakeRelativeUri(path2);
+
+            return Uri.UnescapeDataString(rel.OriginalString);
         }
 
         private string GetRelativePathFromLocalPath(string from, string to) {
@@ -513,7 +511,13 @@ namespace MSBuildTasks
                 path2 = path2 + "\\";
             }
 
-            return GetRelativePath(path1, path2).Replace("\\","/");
+            var rel = GetRelativePath(path1, path2).Replace("\\","/");
+
+            if(!String.Equals(rel.Substring(0),".")) {
+                rel = "./" + rel;
+            }
+
+            return rel;
         }
 
         private string Find(string query, ModelFile file) {
