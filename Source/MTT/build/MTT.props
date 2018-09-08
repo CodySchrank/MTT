@@ -4,8 +4,8 @@
 -->
 <Project TreatAsLocalProperty="TaskFolder;TaskAssembly">
   <PropertyGroup>
-    <TaskFolder Condition=" '$(MSBuildRuntimeType)' == 'Core' ">netstandard1.6</TaskFolder>
-    <TaskFolder Condition=" '$(MSBuildRuntimeType)' != 'Core' ">net46</TaskFolder>
+    <TaskFolder Condition=" '$(MSBuildRuntimeType)' == 'Core' ">netstandard2.0</TaskFolder>
+    <TaskFolder Condition=" '$(MSBuildRuntimeType)' != 'Core' ">net471</TaskFolder>
     <TaskAssembly>$(MSBuildThisFileDirectory)..\tasks\$(TaskFolder)\MTT.dll</TaskAssembly>
   </PropertyGroup>
 

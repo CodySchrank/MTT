@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;net46;net471</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net471</TargetFrameworks>
     <!-- makes this sample work when compiling on macOS and Linux because .NET Framework is not available -->
-    <TargetFrameworks Condition="$(OS) != 'Windows_NT'">netstandard1.6</TargetFrameworks>
+    <TargetFrameworks Condition="$(OS) != 'Windows_NT'">netstandard2.0</TargetFrameworks>
     <PackageOutputPath>$(MSBuildThisFileDirectory)..\..\artifacts\</PackageOutputPath>
     <!-- Suppresses the warnings about the package not having assemblies in lib/*/.dll.-->
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <!-- Change the default location where NuGet will put the build output -->
     <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
     <!-- set the version automatically -->
-    <VersionPrefix>0.4.7</VersionPrefix>
+    <VersionPrefix>0.5.0</VersionPrefix>
     <!-- 
         The suffix is required because nuget will only update if the package is newer, this tricks it. 
         note: 0.1.5 has precedence over 0.1.5-build123412341  
@@ -30,6 +30,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" Version="15.1.1012" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.1012" />
+    <!-- <PackageReference Include="System.CodeDom" Version="4.5.0" /> -->
     <!-- Marks all packages as 'local only' so they don't end up in the nuspec. -->
     <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
   </ItemGroup>

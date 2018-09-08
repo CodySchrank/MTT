@@ -1,3 +1,5 @@
+using Example.Resources.Parts.Unit;
+
 namespace Example.Resources.Parts
 {
     public class Part: Entity
@@ -5,5 +7,7 @@ namespace Example.Resources.Parts
         public string PartName { get; set; }
 
         public string PartCategory { get; set; }
+
+        public Units Units { get; set; }
     }   
 }

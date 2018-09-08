@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- <PackageReference Include="MTT" Version="0.4.7-*" PrivateAssets="All" /> -->
-    <PackageReference Include="MTT" Version="0.4.7"/>
+    <!-- <PackageReference Include="MTT" Version="0.5.0-*" PrivateAssets="All" /> -->
+    <PackageReference Include="MTT" Version="0.5.0"/>
   </ItemGroup>
 
   <Target Name="ConvertMain" BeforeTargets="PrepareForBuild">
