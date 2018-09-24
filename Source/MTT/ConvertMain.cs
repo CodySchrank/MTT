@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
 using System.Runtime.Loader;
 using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace MSBuildTasks
 {
@@ -146,12 +147,95 @@ namespace MSBuildTasks
             }
         }
 
+        private void Compile(string fileContents)
+        {
+            // Write("Parsing the code into the SyntaxTree");
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(fileContents);
+
+            var root = (CompilationUnitSyntax)tree.GetRoot();
+
+            foreach (var usingBlock in root.Usings)
+            {
+                Console.WriteLine("Using block: {0}", usingBlock.Name);
+            }
+
+            var members = tree.GetRoot().DescendantNodes().OfType<MemberDeclarationSyntax>();
+
+            foreach (var member in members)
+            {
+                var property = member as PropertyDeclarationSyntax;
+                if (property != null)
+                    Console.WriteLine("Property: " + property.Identifier);
+                var method = member as MethodDeclarationSyntax;
+                if (method != null)
+                    Console.WriteLine("Method: " + method.Identifier);
+            }
+
+            MetadataReference[] references = new MetadataReference[]
+            {
+                MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location)
+            };
+
+            var compilation = CSharpCompilation.Create("MyCompilation",
+                syntaxTrees: new[] { tree }, references: references);
+            var model = compilation.GetSemanticModel(tree);
+
+            var myClass = tree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().Last();
+            var myClassSymbol = model.GetDeclaredSymbol(myClass);
+            var baseTypeName = myClassSymbol.BaseType.Name;
+
+
+            // string assemblyName = Path.GetRandomFileName();
+            // MetadataReference[] references = new MetadataReference[]
+            // {
+            //     MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location)
+            // };
+
+            // // Write("Compiling ...");
+            // CSharpCompilation compilation = CSharpCompilation.Create(
+            //     assemblyName,
+            //     syntaxTrees: new[] { syntaxTree },
+            //     references: references,
+            //     options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            // using (var ms = new MemoryStream())
+            // {
+            //     EmitResult result = compilation.Emit(ms);
+
+            //     if (!result.Success)
+            //     {
+            //         // Write("Compilation failed!");
+            //         IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => 
+            //             diagnostic.IsWarningAsError || 
+            //             diagnostic.Severity == DiagnosticSeverity.Error);
+
+            //         foreach (Diagnostic diagnostic in failures)
+            //         {
+            //             Console.Error.WriteLine("\t{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+            //         }
+            //     }
+            //     else
+            //     {
+            //         // Write("Compilation successful! Now instantiating and executing the code ...");
+            //         ms.Seek(0, SeekOrigin.Begin);
+
+            //         Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
+
+            //         Log.LogMessage(LoggingImportance, "Parsed Assembly");
+            //     }
+            // }
+        }
+
         private void AddModel(string file, string structure = "")
         {
             structure = structure.Replace(@"\", "/");
             string[] explodedDir = file.Replace(@"\", "/").Split('/');
 
             string fileName = explodedDir[explodedDir.Length - 1];
+
+            string raw = File.ReadAllText(file);
+
+            Compile(raw);
 
             string[] fileInfo = File.ReadAllLines(file);
 

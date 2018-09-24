@@ -9,6 +9,8 @@ namespace MTT
 
         public string[] Info { get; set; } 
 
+        public string Raw { get; set; }
+
         public string Inherits { get; set; }
 
         public string InheritenceStructure { get; set; }
