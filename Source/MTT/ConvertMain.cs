@@ -7,11 +7,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 using MSBuildTask = Microsoft.Build.Utilities.Task;
-using System.Reflection;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis;
-using System.Runtime.Loader;
-using Microsoft.CodeAnalysis.Emit;
 
 namespace MSBuildTasks
 {
