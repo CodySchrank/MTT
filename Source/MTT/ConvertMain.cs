@@ -146,60 +146,12 @@ namespace MSBuildTasks
             }
         }
 
-        private void Compile(string fileContents, string fileName)
-        {            
-            // Write("Parsing the code into the SyntaxTree");
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContents);
-            
-            string assemblyName = Path.GetRandomFileName();
-            MetadataReference[] references = new MetadataReference[]
-            {
-                MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location)
-            };
-
-            // Write("Compiling ...");
-            CSharpCompilation compilation = CSharpCompilation.Create(
-                assemblyName,
-                syntaxTrees: new[] { syntaxTree },
-                references: references,
-                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-    
-            using (var ms = new MemoryStream())
-            {
-                EmitResult result = compilation.Emit(ms);
-
-                if (!result.Success)
-                {
-                    // Write("Compilation failed!");
-                    IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => 
-                        diagnostic.IsWarningAsError || 
-                        diagnostic.Severity == DiagnosticSeverity.Error);
-
-                    foreach (Diagnostic diagnostic in failures)
-                    {
-                        Console.Error.WriteLine("\t{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
-                    }
-                }
-                else
-                {
-                    // Write("Compilation successful! Now instantiating and executing the code ...");
-                    ms.Seek(0, SeekOrigin.Begin);
-                    
-                    Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
-                    
-                    Log.LogMessage(LoggingImportance, "Parsed Assembly");
-                }
-            }
-        }
-
         private void AddModel(string file, string structure = "")
         {
             structure = structure.Replace(@"\", "/");
             string[] explodedDir = file.Replace(@"\", "/").Split('/');
 
             string fileName = explodedDir[explodedDir.Length - 1];
-
-            Compile(File.ReadAllText(file), fileName);
 
             string[] fileInfo = File.ReadAllLines(file);
 
