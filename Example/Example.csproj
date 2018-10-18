@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MTT" Version="0.6.0-*" PrivateAssets="All" />
-    <!-- <PackageReference Include="MTT" Version="0.6.0"/> -->
+    <!-- <PackageReference Include="MTT" Version="0.5.4*" PrivateAssets="All" /> -->
+    <PackageReference Include="MTT" Version="0.5.4"/>
   </ItemGroup>
 
   <Target Name="ConvertMain" BeforeTargets="PrepareForBuild">
