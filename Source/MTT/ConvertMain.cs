@@ -264,6 +264,8 @@ namespace MSBuildTasks
 
                         string varName = modLine[1];
 
+                        if (varName.EndsWith(";")) varName = varName.Substring(0, varName.Length - 1);
+
                         LineObject obj = new LineObject()
                         {
                             VariableName = varName,
