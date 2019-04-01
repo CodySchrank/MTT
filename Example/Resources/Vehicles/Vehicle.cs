@@ -12,7 +12,7 @@ namespace Example.Resources.Vehicles
 
         public string Model { get; set; }
 
-        public int? Mileage { get; set; }
+        public int? Mileage;
 
         public VehicleState Condition { get; set; }  // this is an enum of type int
 
