@@ -131,7 +131,7 @@ Since javascript does not have an enum, but typescript does, only enums of type 
 
 Read more about typescript enums [here](https://www.typescriptlang.org/docs/handbook/enums.html)
 
-Tested on Windows 10 and macOS Mojave
+Tested on Windows 10, macOS Mojave, and Ubuntu 18.04
 
 Follows the case and naming conventions of each language.
 
