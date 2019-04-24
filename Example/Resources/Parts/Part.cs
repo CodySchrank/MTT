@@ -8,6 +8,8 @@ namespace Example.Resources.Parts
 
         public string PartCategory { get; set; }
 
+        public string Routenumber { get; set; }  // because it contains the word enum
+
         public Units Units { get; set; }
     }   
 }

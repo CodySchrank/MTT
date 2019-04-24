@@ -3,7 +3,7 @@ using Example.Resources.Parts;
 
 namespace Example.Resources.Vehicles
 {
-    public class Vehicle : Entity 
+    public abstract class Vehicle : Entity 
     {
         // this is a top level comment
         public int Year { get; set; }

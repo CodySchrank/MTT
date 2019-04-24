@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Framework;
 using MSBuildTask = Microsoft.Build.Utilities.Task;
+using System.Text.RegularExpressions;
 
 namespace MSBuildTasks
 {
@@ -160,7 +161,6 @@ namespace MSBuildTasks
             Models.Add(modelFile);
         }
 
-
         private void BreakDown()
         {
             foreach (var file in Models)
@@ -172,13 +172,13 @@ namespace MSBuildTasks
                     var modLine = new List<string>(ExplodeLine(line));
 
                     // Check for correct structure
-                    if ((line.Contains("enum") && line.Contains("{")) || (line.Contains("class") && line.Contains("{")))
-                    {
+                    if ((line.StrictContains("enum") && line.Contains("{")) || (line.StrictContains("class") && line.Contains("{")))
+                    {                        
                         throw new ArgumentException(string.Format("For parsing, C# DTO's must use curly braces on the next line\nin {0}.cs\n\"{1}\"", file.Name, _line));
                     }
 
                     // Enum declaration
-                    if (line.Contains("enum"))
+                    if (line.StrictContains("enum"))
                     {
                         if (modLine.Count > 2)
                         {
@@ -193,7 +193,7 @@ namespace MSBuildTasks
                         {
                             modLine = new List<string>(ExplodeLine(enumLine));
 
-                            if (!enumLine.Contains("enum") && !IsContructor(enumLine) && !enumLine.Contains("{") && !enumLine.Contains("}") && !String.IsNullOrWhiteSpace(enumLine) && !enumLine.Contains("namespace"))
+                            if (!enumLine.StrictContains("enum") && !IsContructor(enumLine) && !enumLine.Contains("{") && !enumLine.Contains("}") && !String.IsNullOrWhiteSpace(enumLine) && !enumLine.StrictContains("namespace"))
                             {
                                 String name = modLine[0];
                                 bool isImplicit = false;
@@ -230,7 +230,7 @@ namespace MSBuildTasks
 
 
                     // Class declaration
-                    if (line.Contains("class") && line.Contains(":"))
+                    if (line.StrictContains("class") && line.Contains(":"))
                     {
                         string inheritance = modLine[modLine.Count - 1];
                         file.Inherits = inheritance;
@@ -243,7 +243,7 @@ namespace MSBuildTasks
                     }
 
                     // Class property
-                    if (line.Contains("public") && !line.Contains("class") && !IsContructor(line))
+                    if (line.StrictContains("public") && !line.StrictContains("class") && !IsContructor(line))
                     {
                         string type = modLine[0];
                         /** If the property is marked virtual, skip the virtual keyword. */
@@ -576,4 +576,12 @@ namespace MSBuildTasks
         }
     }
 
+    public static class StringExtension
+    {
+        public static bool StrictContains(this string str, string match)
+        {
+            string reg = "(^|\\s)" + match + "(\\s|$)";
+            return Regex.IsMatch(str, reg);
+        }
+    }
 }
