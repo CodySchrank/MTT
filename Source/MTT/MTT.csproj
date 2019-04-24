@@ -16,6 +16,7 @@
     <!-- <VersionSuffix>build$([System.DateTime]::Now.ToString('yyyyMMddHHmmss'))</VersionSuffix> -->
     <Title>C# DTOs To Typescript Interfaces</Title>
     <Authors>Cody Schrank</Authors>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Description>Converts C# DTOs to Typescript Interfaces using MSBUILD Tasks.</Description>
     <PackageProjectUrl>https://github.com/CodySchrank/MTT</PackageProjectUrl>
   </PropertyGroup>
@@ -23,6 +24,10 @@
   <ItemGroup>
     <Content Include="build\*" PackagePath="build\" />
     <Content Include="buildMultiTargeting\*" PackagePath="buildMultiTargeting\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
