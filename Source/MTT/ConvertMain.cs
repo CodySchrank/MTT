@@ -202,7 +202,15 @@ namespace MSBuildTasks
                                 {
                                     try
                                     {
-                                        value = Int32.Parse(modLine[2].Replace(",", ""));
+                                        var tmpValue = modLine[2].Replace(",", "");
+                                        if (tmpValue.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            value = Convert.ToInt32(tmpValue, 16);
+                                        }
+                                        else
+                                        {
+                                            value = Int32.Parse(tmpValue);
+                                        }
                                     }
                                     catch (System.Exception e)
                                     {
