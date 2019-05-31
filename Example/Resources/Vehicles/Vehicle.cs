@@ -16,6 +16,8 @@ namespace Example.Resources.Vehicles
 
         public VehicleState Condition { get; set; }  // this is an enum of type int
 
+        public VehicleStateHex ConditionInHex { get; set; }
+
         public virtual ICollection<Part> Parts { get; set; }
     }
 }

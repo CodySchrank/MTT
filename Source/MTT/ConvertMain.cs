@@ -205,7 +205,7 @@ namespace MSBuildTasks
                                         var tmpValue = modLine[2].Replace(",", "");
                                         if (tmpValue.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
                                         {
-                                            value = Convert.ToInt32(tmpValue, 16);
+                                            value = System.Convert.ToInt32(tmpValue, 16);
                                         }
                                         else
                                         {
