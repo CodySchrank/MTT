@@ -509,13 +509,15 @@ namespace MSBuildTasks
 
         private string[] ExplodeLine(string line)
         {
-            var l = line;
+            var regex = new Regex("\\s*,\\s*");
+            
+            var l = regex.Replace(line, ",");
+
             return l
                 .Replace("public", String.Empty)
                 .Replace("static", String.Empty)
                 .Replace("const", String.Empty)
                 .Replace("readonly", String.Empty)
-                .Replace(", ", String.Empty)
                 .Trim()
                 .Split(' ');
         }
