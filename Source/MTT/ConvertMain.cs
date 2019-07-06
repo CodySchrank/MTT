@@ -515,6 +515,7 @@ namespace MSBuildTasks
                 .Replace("static", String.Empty)
                 .Replace("const", String.Empty)
                 .Replace("readonly", String.Empty)
+                .Replace(", ", String.Empty)
                 .Trim()
                 .Split(' ');
         }
