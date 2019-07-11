@@ -5,3 +5,9 @@ artifacts/
 models/
 .dotnet/
 .vscode/
+Source/MTT/.vs/MTT/v16/Server/sqlite3/db.lock
+Source/MTT/.vs/MTT/v16/Server/sqlite3/storage.ide
+Source/MTT/.vs/MTT/v16/Server/sqlite3/storage.ide-shm
+Source/MTT/.vs/MTT/v16/Server/sqlite3/storage.ide-wal
+Source/TestConsole/Program.cs
+Source/TestConsole/TestConsole.csproj
