@@ -166,127 +166,129 @@ namespace MSBuildTasks
                 {
                     var line = StripComments(_line);
 
-                    if (!line.IsPreProcessorDirective())
+                    if (line.IsPreProcessorDirective())
                     {
-                        var modLine = new List<string>(ExplodeLine(line));
+                        continue;
+                    }
 
-                        // Check for correct structure
-                        if ((line.StrictContains("enum") && line.Contains("{")) || (line.StrictContains("class") && line.Contains("{")))
-                        {                        
-                            throw new ArgumentException(string.Format("For parsing, C# DTO's must use curly braces on the next line\nin {0}.cs\n\"{1}\"", file.Name, _line));
+                    var modLine = new List<string>(ExplodeLine(line));
+
+                    // Check for correct structure
+                    if ((line.StrictContains("enum") && line.Contains("{")) || (line.StrictContains("class") && line.Contains("{")))
+                    {                        
+                        throw new ArgumentException(string.Format("For parsing, C# DTO's must use curly braces on the next line\nin {0}.cs\n\"{1}\"", file.Name, _line));
+                    }
+
+                    // Enum declaration
+                    if (line.StrictContains("enum"))
+                    {
+                        if (modLine.Count > 2)
+                        {
+                            file.Inherits = modLine[modLine.Count - 1];
                         }
 
-                        // Enum declaration
-                        if (line.StrictContains("enum"))
+                        file.IsEnum = true;
+
+                        int value = 0;
+
+                        foreach (var enumLine in file.Info)
                         {
-                            if (modLine.Count > 2)
+                            modLine = new List<string>(ExplodeLine(enumLine));
+
+                            if (!enumLine.StrictContains("enum") && !IsContructor(enumLine) && !enumLine.Contains("{") && !enumLine.Contains("}") && !String.IsNullOrWhiteSpace(enumLine) && !enumLine.StrictContains("namespace"))
                             {
-                                file.Inherits = modLine[modLine.Count - 1];
-                            }
+                                String name = modLine[0];
+                                bool isImplicit = false;
 
-                            file.IsEnum = true;
-
-                            int value = 0;
-
-                            foreach (var enumLine in file.Info)
-                            {
-                                modLine = new List<string>(ExplodeLine(enumLine));
-
-                                if (!enumLine.StrictContains("enum") && !IsContructor(enumLine) && !enumLine.Contains("{") && !enumLine.Contains("}") && !String.IsNullOrWhiteSpace(enumLine) && !enumLine.StrictContains("namespace"))
+                                if (modLine.Count > 1 && modLine[1] == "=")
                                 {
-                                    String name = modLine[0];
-                                    bool isImplicit = false;
-
-                                    if (modLine.Count > 1 && modLine[1] == "=")
+                                    try
                                     {
-                                        try
+                                        var tmpValue = modLine[2].Replace(",", "");
+                                        if (tmpValue.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
                                         {
-                                            var tmpValue = modLine[2].Replace(",", "");
-                                            if (tmpValue.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-                                            {
-                                                value = System.Convert.ToInt32(tmpValue, 16);
-                                            }
-                                            else
-                                            {
-                                                value = Int32.Parse(tmpValue);
-                                            }
+                                            value = System.Convert.ToInt32(tmpValue, 16);
                                         }
-                                        catch (System.Exception e)
+                                        else
                                         {
-                                            throw e;
+                                            value = Int32.Parse(tmpValue);
                                         }
                                     }
-                                    else
+                                    catch (System.Exception e)
                                     {
-                                        isImplicit = true;
+                                        throw e;
                                     }
-
-                                    EnumObject obj = new EnumObject()
-                                    {
-                                        Name = name.Replace(",", ""),
-                                        Value = value,
-                                        IsImplicit = isImplicit
-                                    };
-
-                                    file.EnumObjects.Add(obj);
                                 }
-                            }
+                                else
+                                {
+                                    isImplicit = true;
+                                }
 
-                            break;  //since enums are different we move onto the next file
+                                EnumObject obj = new EnumObject()
+                                {
+                                    Name = name.Replace(",", ""),
+                                    Value = value,
+                                    IsImplicit = isImplicit
+                                };
+
+                                file.EnumObjects.Add(obj);
+                            }
                         }
 
+                        break;  //since enums are different we move onto the next file
+                    }
 
-                        // Class declaration
-                        if (line.StrictContains("class") && line.Contains(":"))
+
+                    // Class declaration
+                    if (line.StrictContains("class") && line.Contains(":"))
+                    {
+                        string inheritance = modLine[modLine.Count - 1];
+                        file.Inherits = inheritance;
+                        file.InheritenceStructure = Find(inheritance, file);
+
+
+                        /** If the class only contains inheritence we need a place holder obj */
+                        LineObject obj = new LineObject() { };
+                        file.Objects.Add(obj);
+                    }
+
+                    // Class property
+                    if (line.StrictContains("public") && !line.StrictContains("class") && !IsContructor(line))
+                    {
+                        string type = modLine[0];
+                        /** If the property is marked virtual, skip the virtual keyword. */
+                        if (type.Equals("virtual"))
                         {
-                            string inheritance = modLine[modLine.Count - 1];
-                            file.Inherits = inheritance;
-                            file.InheritenceStructure = Find(inheritance, file);
-
-
-                            /** If the class only contains inheritence we need a place holder obj */
-                            LineObject obj = new LineObject() { };
-                            file.Objects.Add(obj);
+                            modLine.RemoveAt(0);
+                            type = modLine[0];
                         }
 
-                        // Class property
-                        if (line.StrictContains("public") && !line.StrictContains("class") && !IsContructor(line))
+                        bool IsArray = CheckIsArray(type);
+
+                        bool isOptional = CheckOptional(type);
+
+                        type = CleanType(type);
+
+                        var userDefinedImport = Find(type, file);
+                        var isUserDefined = !String.IsNullOrEmpty(userDefinedImport);
+
+                        string varName = modLine[1];
+
+                        if (varName.EndsWith(";")) {
+                            varName = varName.Substring(0, varName.Length - 1);
+                        }
+
+                        LineObject obj = new LineObject()
                         {
-                            string type = modLine[0];
-                            /** If the property is marked virtual, skip the virtual keyword. */
-                            if (type.Equals("virtual"))
-                            {
-                                modLine.RemoveAt(0);
-                                type = modLine[0];
-                            }
+                            VariableName = varName,
+                            Type = isUserDefined ? type : TypeOf(type),
+                            IsArray = IsArray,
+                            IsOptional = isOptional,
+                            UserDefined = isUserDefined,
+                            UserDefinedImport = userDefinedImport
+                        };
 
-                            bool IsArray = CheckIsArray(type);
-
-                            bool isOptional = CheckOptional(type);
-
-                            type = CleanType(type);
-
-                            var userDefinedImport = Find(type, file);
-                            var isUserDefined = !String.IsNullOrEmpty(userDefinedImport);
-
-                            string varName = modLine[1];
-
-                            if (varName.EndsWith(";")) {
-                                varName = varName.Substring(0, varName.Length - 1);
-                            }
-
-                            LineObject obj = new LineObject()
-                            {
-                                VariableName = varName,
-                                Type = isUserDefined ? type : TypeOf(type),
-                                IsArray = IsArray,
-                                IsOptional = isOptional,
-                                UserDefined = isUserDefined,
-                                UserDefinedImport = userDefinedImport
-                            };
-
-                            file.Objects.Add(obj);
-                        }
+                        file.Objects.Add(obj);
                     }
                 }
             }
