@@ -166,6 +166,11 @@ namespace MSBuildTasks
                 {
                     var line = StripComments(_line);
 
+                    if (line.IsPreProcessorDirective())
+                    {
+                        continue;
+                    }
+
                     var modLine = new List<string>(ExplodeLine(line));
 
                     // Check for correct structure
@@ -590,6 +595,11 @@ namespace MSBuildTasks
         {
             string reg = "(^|\\s)" + match + "(\\s|$)";
             return Regex.IsMatch(str, reg);
+        }
+
+        public static bool IsPreProcessorDirective(this string str)
+        {
+            return Regex.IsMatch(str, "^#\w+");
         }
     }
 }
