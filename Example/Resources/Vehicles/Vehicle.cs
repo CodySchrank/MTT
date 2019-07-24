@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using Example.Resources.Parts;
 
+//empty preprocessor directive with conflicting keyword
+#if enum
+#endif
+
 namespace Example.Resources.Vehicles
 {
     public abstract class Vehicle : Entity 

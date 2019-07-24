@@ -599,7 +599,7 @@ namespace MSBuildTasks
 
         public static bool IsPreProcessorDirective(this string str)
         {
-            return Regex.IsMatch(str, "^#\w+");
+            return Regex.IsMatch(str, @"^#\w+");
         }
     }
 }
