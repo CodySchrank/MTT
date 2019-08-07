@@ -207,7 +207,7 @@ namespace MTT
 
                             modLine = new List<string>(ExplodeLine(enumLine));
 
-                            if (!enumLine.StrictContains("enum") && !IsContructor(enumLine) && !enumLine.Contains("{") && !enumLine.Contains("}") && !String.IsNullOrWhiteSpace(enumLine) && !enumLine.StrictContains("namespace"))
+                            if (IsEnumObject(enumLine))
                             {
                                 String name = modLine[0];
                                 bool isImplicit = false;
@@ -520,6 +520,18 @@ namespace MTT
         private bool IsContructor(string line)
         {
             return line.Contains("()") || ((line.Contains("(") && line.Contains(")")));
+        }
+
+        private bool IsEnumObject(string line)
+        {
+            return 
+                !String.IsNullOrWhiteSpace(line)
+                && !line.StrictContains("enum")
+                && !line.StrictContains("namespace")
+                && !line.StrictContains("using")
+                && !IsContructor(line) 
+                && !line.Contains("{") && !line.Contains("}")
+                && !line.Contains("[") && !line.Contains("]");
         }
 
         private string[] ExplodeLine(string line)

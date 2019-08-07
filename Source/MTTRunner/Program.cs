@@ -14,6 +14,8 @@ namespace MTTRunner
             if (args.Length != 2)
             {
                 Console.WriteLine("Arguments should contain the ConvertDirectory and the WorkingDirectory");
+                Console.ReadLine();
+                return;
             }
 
             var convertService = new ConvertService((logString, logArgs) => Console.WriteLine(logString, logArgs))
