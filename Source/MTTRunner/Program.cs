@@ -3,7 +3,7 @@ using MTT;
 
 namespace MTTRunner
 {
-    class Program
+    public class Program
     {
         /// <summary>
         /// Defines the entry point of the application.
@@ -13,19 +13,22 @@ namespace MTTRunner
         {
             if (args.Length != 2)
             {
-                Console.WriteLine("Arguments should contain the ConvertDirectory and the WorkingDirectory");
-                Console.ReadLine();
-                return;
+                throw new Exception("Arguments should contain the ConvertDirectory and the WorkingDirectory");
             }
 
+            Program.StartService(args);
+        }
+
+        public static void StartService(string[] args) {
             var convertService = new ConvertService((logString, logArgs) => Console.WriteLine(logString, logArgs))
             {
-                ConvertDirectory = args[0],
-                WorkingDirectory = args[1]
+                WorkingDirectory = args[0],
+                ConvertDirectory = args[1]
             };
+            
             convertService.Execute();
-
-            Console.ReadLine();
         }
+
+
     }
 }
