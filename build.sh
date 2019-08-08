@@ -27,6 +27,7 @@ else
     rm -rf Example/obj/
     rm -rf Source/MTT/obj/
 
+    __exec dotnet test
     __exec dotnet restore ./Source/MTT/
     __exec dotnet pack -c Release ./Source/MTT/
     __exec dotnet restore ./Example/
