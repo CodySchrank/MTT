@@ -12,13 +12,19 @@ namespace MTTRunner.Tests
         private readonly string WorkingDir = "workingDir/";
         private readonly string ConvertDir = "convertDir/";
         private string VehicleFile;
+        private string VehicleStateFile;
 
         [SetUp]
         public void Setup()
         {
             VehicleFile = Path.Combine(CurrentDir, ConvertDir, "Vehicles/vehicle.ts");
+            VehicleStateFile = Path.Combine(CurrentDir, ConvertDir, "Vehicles/vehicleState.ts");
 
             var resources = CurrentDir.Replace("Source/MTTRunner.Tests/bin/Debug/netcoreapp2.2", "example/Resources");
+
+            if(!Directory.Exists(resources)) {
+                throw new Exception("Resources Directory does not exist");
+            }
 
             if(Directory.Exists(WorkingDir)) {
                 Directory.Delete(WorkingDir, true);
@@ -139,6 +145,29 @@ namespace MTTRunner.Tests
             foreach(string line in lines) {
                 Assert.That(line.DoesNotStrictContain("namespace"));
             }
+        }
+
+        
+        [Test]
+        public void EnumTransformationExists() {
+            string[] lines = System.IO.File.ReadAllLines(VehicleStateFile);
+
+            Assert.That(lines[2], Is.EqualTo("export enum VehicleState {"));
+        }
+
+                
+        [Test]
+        public void EnumPropertyWithValueExists() {
+            string[] lines = System.IO.File.ReadAllLines(VehicleStateFile);
+
+            Assert.That(lines[3], Is.EqualTo("    broken = 1,"));
+        }
+
+        [Test]
+        public void EnumPropertyWithoutValueExists() {
+            string[] lines = System.IO.File.ReadAllLines(VehicleStateFile);
+
+            Assert.That(lines[4], Is.EqualTo("    used,"));
         }
 
         /**
