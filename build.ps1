@@ -12,6 +12,7 @@ Remove-Item artifacts/ -Recurse -ErrorAction Ignore
 Remove-Item Example/obj/ -Recurse -ErrorAction Ignore
 Remove-Item Source/MTT/obj/ -Recurse -ErrorAction Ignore
 
+exec dotnet test
 exec dotnet restore ./Source/MTT/
 exec dotnet pack -c Release ./Source/MTT/
 exec dotnet restore ./Example/
