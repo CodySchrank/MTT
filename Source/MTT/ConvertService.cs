@@ -144,13 +144,22 @@ namespace MTT
                 }
             }
 
-            var workingUri = new Uri(LocalWorkingDir + "\\");
+            var workingUri = new Uri(EnsureTrailingSlash(LocalWorkingDir));
             var dirUri = new Uri(dirname);
             var relativePath = workingUri.MakeRelativeUri(dirUri).OriginalString;
             foreach (var file in files)
             {
                 AddModel(file, relativePath);
             }
+        }
+
+        private string EnsureTrailingSlash(string str)
+        {
+            if (!str.EndsWith("/") && !str.EndsWith("\\"))
+            {
+                str += "\\";
+            }
+            return str;
         }
 
         private void AddModel(string file, string structure = "")
