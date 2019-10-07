@@ -111,7 +111,7 @@ namespace MTT
             else
             {
                 log("Convert Directory {0}", localdir);
-                DeleteDirectory(localdir);
+                DeleteDirectory(localdir, 0);
             }
 
             Directory.CreateDirectory(localdir).Create();
@@ -119,24 +119,25 @@ namespace MTT
             return;
         }
 
-        private void DeleteDirectory(string path)
+        private void DeleteDirectory(string path, int iteration)
         {
             foreach (string directory in Directory.GetDirectories(path))
             {
-                DeleteDirectory(directory);
+                DeleteDirectory(directory, 0);
             }
 
             try
             {
                 Directory.Delete(path, true);
             }
-            catch (IOException)
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
             {
-                Directory.Delete(path, true);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                Directory.Delete(path, true);
+                if (iteration >= 10)
+                {
+                    throw;
+                }
+                Thread.Sleep(100 * (int)Math.Pow(2, iteration));
+                DeleteDirectory(path, ++iteration);
             }
         }
 
@@ -379,12 +380,11 @@ namespace MTT
 
             foreach (var file in Models)
             {
-                DirectoryInfo di = Directory.CreateDirectory(Path.Combine(LocalConvertDir, file.Structure));
-                di.Create();
+                var directoryPath = Path.Combine(LocalConvertDir, file.Structure);
 
                 string fileName = ToCamelCase(file.Name + ".ts");
                 log("Creating file {0}", fileName);
-                string saveDir = Path.Combine(di.FullName, fileName);
+                string saveDir = Path.Combine(directoryPath, fileName);
 
                 using (var stream = GetStream(saveDir, 0))
                 using (StreamWriter f =
@@ -492,6 +492,7 @@ namespace MTT
         {
             try
             {
+                Directory.CreateDirectory(Path.GetDirectoryName(saveDir));
                 return new FileStream(saveDir, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.SequentialScan);
             }
             catch (UnauthorizedAccessException)
@@ -514,7 +515,6 @@ namespace MTT
                 {
                     throw;
                 }
-                Directory.CreateDirectory(Path.GetDirectoryName(saveDir));
                 return GetStream(saveDir, ++iteration);
             }
         }
