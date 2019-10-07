@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace MTT
 {
@@ -110,12 +111,33 @@ namespace MTT
             else
             {
                 log("Convert Directory {0}", localdir);
-                Directory.Delete(localdir, true);
+                DeleteDirectory(localdir);
             }
 
             Directory.CreateDirectory(localdir).Create();
             LocalConvertDir = localdir;
             return;
+        }
+
+        private void DeleteDirectory(string path)
+        {
+            foreach (string directory in Directory.GetDirectories(path))
+            {
+                DeleteDirectory(directory);
+            }
+
+            try
+            {
+                Directory.Delete(path, true);
+            }
+            catch (IOException)
+            {
+                Directory.Delete(path, true);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Directory.Delete(path, true);
+            }
         }
 
         private void LoadModels(string dirname = "")
@@ -364,7 +386,7 @@ namespace MTT
                 log("Creating file {0}", fileName);
                 string saveDir = Path.Combine(di.FullName, fileName);
 
-                using (var stream = new FileStream(saveDir, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.SequentialScan))
+                using (var stream = GetStream(saveDir, 0))
                 using (StreamWriter f =
                     new StreamWriter(stream, System.Text.Encoding.UTF8, 1024, false))
                 {
@@ -463,6 +485,37 @@ namespace MTT
                         f.WriteLine("}");
                     }
                 }
+            }
+        }
+
+        private static FileStream GetStream(string saveDir, int iteration)
+        {
+            try
+            {
+                return new FileStream(saveDir, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.SequentialScan);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Could caused by an open file handle that left for some time after the file itself has been deleted.
+                // We retry open in an exponential backoff.
+                if (iteration >= 10)
+                {
+                    throw;
+                }
+                Thread.Sleep(100 * (int)Math.Pow(2, iteration));
+                return GetStream(saveDir, ++iteration);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                // Due to the asynchronous nature of the file system, when file handles left open after a directory was deleted,
+                // the directory deletion itself could happan only after the file is finally closed, so even though we already
+                // created it - it was deleted again and doesn't exist right now. So we should re-create it.
+                if (iteration >= 10)
+                {
+                    throw;
+                }
+                Directory.CreateDirectory(Path.GetDirectoryName(saveDir));
+                return GetStream(saveDir, ++iteration);
             }
         }
 
