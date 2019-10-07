@@ -411,7 +411,7 @@ namespace MTT
                             if (!String.IsNullOrEmpty(file.Inherits))
                             {
                                 importing = true;
-                                var import = "import { " + file.Inherits + " } from \"" + file.InheritenceStructure + "\"";
+                                var import = "import { " + file.Inherits + " } from '" + file.InheritenceStructure + "';";
 
                                 if (!imports.Contains(import))
                                 {
@@ -423,7 +423,7 @@ namespace MTT
                             if (obj.UserDefined)
                             {
                                 importing = true;
-                                var import = "import { " + obj.Type + " } from \"" + obj.UserDefinedImport + "\"";
+                                var import = "import { " + obj.Type + " } from '" + obj.UserDefinedImport + "';";
 
                                 if (!imports.Contains(import))
                                 {

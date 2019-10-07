@@ -66,14 +66,14 @@ namespace MTTRunner.Tests
         public void DifferentDirImportStatementExists() {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
-            Assert.That(lines[2], Is.EqualTo("import { Entity } from \"./../entity\""));
+            Assert.That(lines[2], Is.EqualTo("import { Entity } from './../entity';"));
         }
 
         [Test]
         public void SameDirImportStatementExists() {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
-            Assert.That(lines[3], Is.EqualTo("import { VehicleState } from \"./vehicleState\""));
+            Assert.That(lines[3], Is.EqualTo("import { VehicleState } from './vehicleState';"));
         }
 
         [Test]
