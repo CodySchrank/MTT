@@ -112,6 +112,13 @@ namespace MTTRunner.Tests
         }
 
         [Test]
+        public void InitializedListExists()
+        {
+            string[] lines = System.IO.File.ReadAllLines(VehicleFile);
+            Assert.That(lines[14], Is.EqualTo("    spareParts: Part[];"));
+        }
+
+        [Test]
         public void CommentsDoNotExist() {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
             
