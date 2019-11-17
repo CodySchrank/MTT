@@ -36,7 +36,7 @@ _PathStyle_ (default dont change) if set to _Kebeb_, changes the file and direct
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MTT" Version="0.6.1"/>
+    <PackageReference Include="MTT" Version="0.6.3"/>
   </ItemGroup>
 
   <Target Name="Convert" BeforeTargets="PrepareForBuild">
@@ -121,6 +121,7 @@ It correctly converts the following C# types to the equivalent typescript:
 * Enumerbale
 * IEnumerable
 * ICollection
+* IList
 * Enum
 * Optional
 * virtual
