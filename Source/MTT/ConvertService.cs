@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -34,6 +35,11 @@ namespace MTT
         /// Determines whether to generate numeric or string values in typescript enums
         /// </summary>
         public EnumValues EnumValues { get; internal set; }
+        
+        /// <summary>
+        /// Determines the naming style of the generated files and folders
+        /// </summary>
+        public PathStyle PathStyle { get; set; }
 
         private List<ModelFile> Models { get; set; }
 
@@ -166,10 +172,22 @@ namespace MTT
                 }
             }
 
+            var workingUri = new Uri(EnsureTrailingSlash(LocalWorkingDir));
+            var dirUri = new Uri(dirname);
+            var relativePath = workingUri.MakeRelativeUri(dirUri).OriginalString;
             foreach (var file in files)
             {
-                AddModel(file, dirname.Replace(LocalWorkingDir, String.Empty));
+                AddModel(file, relativePath);
             }
+        }
+
+        private string EnsureTrailingSlash(string str)
+        {
+            if (!str.EndsWith("/") && !str.EndsWith("\\"))
+            {
+                str += "\\";
+            }
+            return str;
         }
 
         private void AddModel(string file, string structure = "")
@@ -283,13 +301,23 @@ namespace MTT
                     if (line.StrictContains("class") && line.Contains(":"))
                     {
                         string inheritance = modLine[modLine.Count - 1];
-                        file.Inherits = inheritance;
-                        file.InheritenceStructure = Find(inheritance, file);
+
+                        // Ignore interfaces by convention
+                        if (!(inheritance.StartsWith("I") && inheritance.Length > 1 && char.IsUpper(inheritance[1])))
+                        {
+                            var commaIndex = inheritance.IndexOf(',');
+                            if (commaIndex > 0)
+                            {
+                                inheritance = inheritance.Substring(0, commaIndex);
+                            }
+                            file.Inherits = inheritance;
+                            file.InheritenceStructure = Find(inheritance, file);
 
 
-                        /** If the class only contains inheritence we need a place holder obj */
-                        LineObject obj = new LineObject() { };
-                        file.Objects.Add(obj);
+                            /** If the class only contains inheritence we need a place holder obj */
+                            LineObject obj = new LineObject() { };
+                            file.Objects.Add(obj);
+                        }
                     }
 
                     // Class property
@@ -387,7 +415,14 @@ namespace MTT
             {
                 var directoryPath = Path.Combine(LocalConvertDir, file.Structure);
 
-                string fileName = ToCamelCase(file.Name + ".ts");
+                var relativePath = PathStyle == PathStyle.Kebab
+                    ? ToKebabCasePath(file.Structure)
+                    : file.Structure;
+                    
+                DirectoryInfo di = Directory.CreateDirectory(Path.Combine(LocalConvertDir, relativePath));
+                di.Create();
+
+                string fileName = (PathStyle == PathStyle.Kebab ? ToKebabCase(file.Name) : ToCamelCase(file.Name)) + ".ts";
                 log("Creating file {0}", fileName);
                 string saveDir = Path.Combine(directoryPath, fileName);
 
@@ -445,7 +480,9 @@ namespace MTT
                             if (!String.IsNullOrEmpty(file.Inherits))
                             {
                                 importing = true;
-                                var import = "import { " + file.Inherits + " } from '" + file.InheritenceStructure + "';";
+
+                                var import = "import { " + file.Inherits + " } from \""
+                                    + (PathStyle == PathStyle.Kebab ? ToKebabCasePath(file.InheritenceStructure) : file.InheritenceStructure) + "\";";
 
                                 if (!imports.Contains(import))
                                 {
@@ -457,7 +494,8 @@ namespace MTT
                             if (obj.UserDefined)
                             {
                                 importing = true;
-                                var import = "import { " + obj.Type + " } from '" + obj.UserDefinedImport + "';";
+                                var import = "import { " + obj.Type + " } from \""
+                                    + (PathStyle == PathStyle.Kebab ? ToKebabCasePath(obj.UserDefinedImport) : obj.UserDefinedImport) + "\";";
 
                                 if (!imports.Contains(import))
                                 {
@@ -555,6 +593,32 @@ namespace MTT
                 return str;
 
             return Char.ToUpperInvariant(str[0]) + str.Substring(1);
+        }
+
+        private string ToKebabCase(string str)
+        {
+            if (String.IsNullOrEmpty(str))
+                return str;
+
+            var words = new List<string>();
+            var wordStart = 0;
+            int i;
+            for (i = 1; i < str.Length; i++)
+            {
+                if (char.IsUpper(str[i]))
+                {
+                    words.Add(str.Substring(wordStart, i - wordStart));
+                    wordStart = i;
+                }
+            }
+            words.Add(str.Substring(wordStart, i - wordStart));
+
+            return string.Join("-", words.Where(w => !string.IsNullOrEmpty(w)).Select(w => w.ToLower()));
+        }
+
+        private string ToKebabCasePath(string path)
+        {
+            return string.Join("/", path.Split('/').Select(segment => ToKebabCase(segment)));
         }
 
         private bool CheckIsArray(string type)

@@ -28,7 +28,7 @@ namespace MTT
 
         public string PrintBasic() {
             return Name.ToString()
-            + " : " + Structure.ToString();
+            + " : /" + Structure.ToString();
         }
 
         public override string ToString() {
