@@ -18,7 +18,7 @@ namespace Example.Resources.Vehicles
 
         public int? Mileage;
 
-        public Dictionary<string, string> keyValuePair { get; set; }
+        public Dictionary<string, string> Options { get; set; }
 
         public VehicleState Condition { get; set; }  // this is an enum of type int
 
