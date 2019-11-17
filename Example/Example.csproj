@@ -6,11 +6,11 @@
 
   <ItemGroup>
     <!-- <PackageReference Include="MTT" Version="0.5.9-*" PrivateAssets="All" /> -->
-    <PackageReference Include="MTT" Version="0.6.1"/>
+    <PackageReference Include="MTT" Version="0.6.2" />
   </ItemGroup>
 
   <Target Name="ConvertMain" BeforeTargets="PrepareForBuild">
-    <ConvertMain WorkingDirectory="Resources/" ConvertDirectory="models/"/>
+    <ConvertMain WorkingDirectory="Resources/" ConvertDirectory="models/" />
   </Target>
 
 </Project>

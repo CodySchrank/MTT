@@ -23,5 +23,7 @@ namespace Example.Resources.Vehicles
         public VehicleState Condition { get; set; }  // this is an enum of type int
 
         public virtual ICollection<Part> Parts { get; set; }
+        
+        public IList<Part> SpareParts { get; set; } = new List<Part>();
     }
 }

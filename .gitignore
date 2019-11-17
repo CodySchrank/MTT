@@ -11,5 +11,6 @@ models/
 .dotnet/
 .vscode/
 .vs/
+.idea/
 Source/TestConsole/Program.cs
 Source/TestConsole/TestConsole.csproj

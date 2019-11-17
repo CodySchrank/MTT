@@ -275,7 +275,7 @@ namespace MTT
                             type = modLine[0];
                         }
 
-                        bool IsArray = CheckIsArray(type);
+                        bool isArray = CheckIsArray(type);
 
                         bool isOptional = CheckOptional(type);
 
@@ -295,7 +295,7 @@ namespace MTT
                         {
                             VariableName = varName,
                             Type = isUserDefined ? type : TypeOf(type),
-                            IsArray = IsArray,
+                            IsArray = isArray,
                             IsOptional = isOptional,
                             UserDefined = isUserDefined,
                             UserDefinedImport = userDefinedImport
@@ -497,9 +497,11 @@ namespace MTT
             return type.Contains("[]") ||
                 type.Contains("ICollection") ||
                 type.Contains("IEnumerable") ||
+                type.Contains("IList") ||
                 type.Contains("Array") ||
                 type.Contains("Enumerable") ||
-                type.Contains("Collection");
+                type.Contains("Collection") ||
+                type.Contains("List");
         }
 
         private bool CheckOptional(string type)
@@ -513,13 +515,14 @@ namespace MTT
                 .Replace("[]", String.Empty)
                 .Replace("ICollection", String.Empty)
                 .Replace("IEnumerable", String.Empty)
+                .Replace("IList", String.Empty)
                 .Replace("<", String.Empty)
                 .Replace(">", String.Empty);
         }
 
         private bool IsContructor(string line)
         {
-            return line.Contains("()") || ((line.Contains("(") && line.Contains(")")));
+            return !line.StrictContains("new") && (line.Contains("()") || ((line.Contains("(") && line.Contains(")"))));
         }
 
         private bool IsEnumObject(string line)
