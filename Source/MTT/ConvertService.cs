@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace MTT
 {
@@ -115,12 +116,34 @@ namespace MTT
             else
             {
                 log("Convert Directory {0}", localdir);
-                Directory.Delete(localdir, true);
+                DeleteDirectory(localdir, 0);
             }
 
             Directory.CreateDirectory(localdir).Create();
             LocalConvertDir = localdir;
             return;
+        }
+
+        private void DeleteDirectory(string path, int iteration)
+        {
+            foreach (string directory in Directory.GetDirectories(path))
+            {
+                DeleteDirectory(directory, 0);
+            }
+
+            try
+            {
+                Directory.Delete(path, true);
+            }
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+            {
+                if (iteration >= 10)
+                {
+                    throw;
+                }
+                Thread.Sleep(100 * (int)Math.Pow(2, iteration));
+                DeleteDirectory(path, ++iteration);
+            }
         }
 
         private void LoadModels(string dirname = "")
@@ -362,14 +385,13 @@ namespace MTT
 
             foreach (var file in Models)
             {
-                DirectoryInfo di = Directory.CreateDirectory(Path.Combine(LocalConvertDir, file.Structure));
-                di.Create();
+                var directoryPath = Path.Combine(LocalConvertDir, file.Structure);
 
                 string fileName = ToCamelCase(file.Name + ".ts");
                 log("Creating file {0}", fileName);
-                string saveDir = Path.Combine(di.FullName, fileName);
+                string saveDir = Path.Combine(directoryPath, fileName);
 
-                using (var stream = new FileStream(saveDir, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.SequentialScan))
+                using (var stream = GetStream(saveDir, 0))
                 using (StreamWriter f =
                     new StreamWriter(stream, System.Text.Encoding.UTF8, 1024, false))
                 {
@@ -475,6 +497,37 @@ namespace MTT
                         f.WriteLine("}");
                     }
                 }
+            }
+        }
+
+        private static FileStream GetStream(string saveDir, int iteration)
+        {
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(saveDir));
+                return new FileStream(saveDir, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.SequentialScan);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Could caused by an open file handle that left for some time after the file itself has been deleted.
+                // We retry open in an exponential backoff.
+                if (iteration >= 10)
+                {
+                    throw;
+                }
+                Thread.Sleep(100 * (int)Math.Pow(2, iteration));
+                return GetStream(saveDir, ++iteration);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                // Due to the asynchronous nature of the file system, when file handles left open after a directory was deleted,
+                // the directory deletion itself could happan only after the file is finally closed, so even though we already
+                // created it - it was deleted again and doesn't exist right now. So we should re-create it.
+                if (iteration >= 10)
+                {
+                    throw;
+                }
+                return GetStream(saveDir, ++iteration);
             }
         }
 
