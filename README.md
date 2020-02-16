@@ -84,7 +84,7 @@ export interface Vehicle extends Entity {
     make: string;
     model: string;
     mileage?: number;
-    options: Record<string, Units>;
+    options: Map<string, Units>;
     condition: VehicleState;
     parts: Part[];
     spareParts: Part[];
@@ -132,6 +132,8 @@ It correctly converts the following C# types to the equivalent typescript:
 * Optional
 * virtual
 * abstract
+* Dictionary
+* IDictionary
 
 ## Notes
 

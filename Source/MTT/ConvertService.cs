@@ -349,7 +349,7 @@ namespace MTT
                             LineObject obj = new LineObject()
                             {
                                 VariableName = varName,
-                                Type = "Record",
+                                Type = "Map",
                                 IsArray = false,
                                 IsOptional = isOptional,
                                 UserDefined = false,

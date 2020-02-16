@@ -98,10 +98,10 @@ namespace MTTRunner.Tests
         }
 
         [Test]
-        public void CheckRecordExists() {
+        public void CheckMapExists() {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
-            Assert.That(lines[12], Is.EqualTo("    options: Record<string, Units>;"));
+            Assert.That(lines[12], Is.EqualTo("    options: Map<string, Units>;"));
         }
 
         [Test]
