@@ -51,6 +51,7 @@ _PathStyle_ (default is folders stay the same and files become camelCase) if set
 ```C#
 using System.Collections.Generic;
 using Example.Resources.Parts;
+using Example.Resources.Parts.Unit;
 
 namespace Example.Resources.Vehicles
 {
@@ -60,7 +61,7 @@ namespace Example.Resources.Vehicles
         public string Make { get; set; }
         public string Model { get; set; }
         public int? Mileage;
-        public Dictionary<string, string> Options { get; set; }
+        public Dictionary<string, Units> Options { get; set; }
         public VehicleState Condition { get; set; }  // this is an enum of type int
         public virtual ICollection<Part> Parts { get; set; }
         public IList<Part> SpareParts { get; set; } = new List<Part>();
@@ -74,6 +75,7 @@ namespace Example.Resources.Vehicles
 /* Auto Generated */
 
 import { Entity } from "./../entity";
+import { Units } from "./../Parts/Unit/units";
 import { VehicleState } from "./vehicleState";
 import { Part } from "./../Parts/part";
 
@@ -82,11 +84,12 @@ export interface Vehicle extends Entity {
     make: string;
     model: string;
     mileage?: number;
-    options: any;
+    options: Record<string, Units>;
     condition: VehicleState;
     parts: Part[];
     spareParts: Part[];
 }
+
 ```
 
 ## Types
