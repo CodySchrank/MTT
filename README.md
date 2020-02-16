@@ -36,7 +36,7 @@ _PathStyle_ (default is folders stay the same and files become camelCase) if set
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MTT" Version="0.6.3"/>
+    <PackageReference Include="MTT" Version="0.6.4"/>
   </ItemGroup>
 
   <Target Name="Convert" BeforeTargets="PrepareForBuild">

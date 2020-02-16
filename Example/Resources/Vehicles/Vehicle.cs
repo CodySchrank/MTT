@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Example.Resources.Parts;
+using Example.Resources.Parts.Unit;
 
 //empty preprocessor directive with conflicting keyword
 #if enum
@@ -18,7 +19,7 @@ namespace Example.Resources.Vehicles
 
         public int? Mileage;
 
-        public Dictionary<string, string> Options { get; set; }
+        public Dictionary<string, Units> Options { get; set; }
 
         public VehicleState Condition { get; set; }  // this is an enum of type int
 

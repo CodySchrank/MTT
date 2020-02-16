@@ -73,49 +73,56 @@ namespace MTTRunner.Tests
         public void SameDirImportStatementExists() {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
-            Assert.That(lines[3], Is.EqualTo("import { VehicleState } from \"./vehicleState\";"));
+            Assert.That(lines[4], Is.EqualTo("import { VehicleState } from \"./vehicleState\";"));
         }
 
         [Test]
         public void ClassTransformationExists() {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
-            Assert.That(lines[6], Is.EqualTo("export interface Vehicle extends Entity {"));
+            Assert.That(lines[7], Is.EqualTo("export interface Vehicle extends Entity {"));
         }
 
         [Test]
         public void PropertyExists() {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
-            Assert.That(lines[7], Is.EqualTo("    year: number;"));
+            Assert.That(lines[8], Is.EqualTo("    year: number;"));
         }
 
         [Test]
         public void OptionalPropertyExists() {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
-            Assert.That(lines[10], Is.EqualTo("    mileage?: number;"));
+            Assert.That(lines[11], Is.EqualTo("    mileage?: number;"));
+        }
+
+        [Test]
+        public void CheckRecordExists() {
+            string[] lines = System.IO.File.ReadAllLines(VehicleFile);
+
+            Assert.That(lines[12], Is.EqualTo("    options: Record<string, Units>;"));
         }
 
         [Test]
         public void EnumPropertyExists() {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
-            Assert.That(lines[12], Is.EqualTo("    condition: VehicleState;"));
+            Assert.That(lines[13], Is.EqualTo("    condition: VehicleState;"));
         }
 
         [Test]
         public void ArrayExists() {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
-            Assert.That(lines[13], Is.EqualTo("    parts: Part[];"));
+            Assert.That(lines[14], Is.EqualTo("    parts: Part[];"));
         }
 
         [Test]
         public void InitializedListExists()
         {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
-            Assert.That(lines[14], Is.EqualTo("    spareParts: Part[];"));
+            Assert.That(lines[15], Is.EqualTo("    spareParts: Part[];"));
         }
 
         [Test]

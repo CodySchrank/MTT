@@ -335,29 +335,81 @@ namespace MTT
 
                         bool isOptional = CheckOptional(type);
 
-                        type = CleanType(type);
+                        bool isDic = CheckDictionary(type);
 
-                        var userDefinedImport = Find(type, file);
-                        var isUserDefined = !String.IsNullOrEmpty(userDefinedImport);
-
-                        string varName = modLine[1];
-
-                        if (varName.EndsWith(";"))
+                        if(isDic)
                         {
-                            varName = varName.Substring(0, varName.Length - 1);
+                            string varName = modLine[1];
+
+                            if (varName.EndsWith(";"))
+                            {
+                                varName = varName.Substring(0, varName.Length - 1);
+                            }
+
+                            LineObject obj = new LineObject()
+                            {
+                                VariableName = varName,
+                                Type = "Record",
+                                IsArray = false,
+                                IsOptional = isOptional,
+                                UserDefined = false,
+                                UserDefinedImport = "",
+                                Container = new LineObject[2]
+                            };
+
+                            List<string> types = CleanType(type).Replace("Dictionary", String.Empty).Replace("IDictionary", String.Empty).Split(',').ToList();
+                            types.ForEach(x => x.Trim());
+                        
+                            int index = 0;
+                            foreach(string t in types)
+                            {
+                                string innerType = CleanType(t);
+
+                                var userDefinedImport = Find(innerType, file);
+                                var isUserDefined = !String.IsNullOrEmpty(userDefinedImport);
+
+                                LineObject lo = new LineObject()
+                                {
+                                    VariableName = "",
+                                    Type = isUserDefined ? innerType : TypeOf(innerType),
+                                    IsArray = false,
+                                    IsOptional = false,
+                                    UserDefined = isUserDefined,
+                                    UserDefinedImport = userDefinedImport
+                                };
+
+                                obj.Container[index] = lo;
+                                index++;
+                            }
+                            
+                            file.Objects.Add(obj);
                         }
-
-                        LineObject obj = new LineObject()
+                        else
                         {
-                            VariableName = varName,
-                            Type = isUserDefined ? type : TypeOf(type),
-                            IsArray = isArray,
-                            IsOptional = isOptional,
-                            UserDefined = isUserDefined,
-                            UserDefinedImport = userDefinedImport
-                        };
+                            type = CleanType(type);
 
-                        file.Objects.Add(obj);
+                            var userDefinedImport = Find(type, file);
+                            var isUserDefined = !String.IsNullOrEmpty(userDefinedImport);
+
+                            string varName = modLine[1];
+
+                            if (varName.EndsWith(";"))
+                            {
+                                varName = varName.Substring(0, varName.Length - 1);
+                            }
+
+                            LineObject obj = new LineObject()
+                            {
+                                VariableName = varName,
+                                Type = isUserDefined ? type : TypeOf(type),
+                                IsArray = isArray,
+                                IsOptional = isOptional,
+                                UserDefined = isUserDefined,
+                                UserDefinedImport = userDefinedImport
+                            };
+                            
+                            file.Objects.Add(obj);
+                        }
                     }
                 }
             }
@@ -503,6 +555,25 @@ namespace MTT
                                     imports.Add(import);
                                 }
                             }
+
+                            if (obj.IsContainer)
+                            {
+                                foreach (LineObject innerObj in obj.Container)
+                                {
+                                    if (innerObj.UserDefined)
+                                    {
+                                        importing = true;
+                                        var import = "import { " + innerObj.Type + " } from \""
+                                            + (PathStyle == PathStyle.Kebab ? ToKebabCasePath(innerObj.UserDefinedImport) : innerObj.UserDefinedImport) + "\";";
+
+                                        if (!imports.Contains(import))
+                                        {
+                                            f.WriteLine(import);
+                                            imports.Add(import);
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         if (importing)
@@ -519,7 +590,17 @@ namespace MTT
 
                         foreach (var obj in file.Objects)
                         {
-                            if (!String.IsNullOrEmpty(obj.VariableName))
+                            if(obj.IsContainer)
+                            {
+                                var str =
+                                    ToCamelCase(obj.VariableName)
+                                    + (obj.IsOptional ? "?" : String.Empty)
+                                    + ": "
+                                    + $"{obj.Type}<{obj.Container[0].Type}, {obj.Container[1].Type}>;";
+
+                                f.WriteLine("    " + str);
+                            }
+                            else if (!String.IsNullOrEmpty(obj.VariableName))
                             {  //not an empty obj
                                 var str =
                                     ToCamelCase(obj.VariableName)
@@ -532,6 +613,7 @@ namespace MTT
                                 f.WriteLine("    " + str);
                             }
                         }
+
                         f.WriteLine("}");
                     }
                 }
@@ -636,6 +718,11 @@ namespace MTT
         private bool CheckOptional(string type)
         {
             return type.Contains("?");
+        }
+        
+        private bool CheckDictionary(string type)
+        {
+            return ( type.Contains("Dictionary") || type.Contains("IDictionary") ) && type.Contains("<") && type.Contains(">") && type.Contains(",");
         }
 
         private string CleanType(string type)

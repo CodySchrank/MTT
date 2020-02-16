@@ -13,7 +13,13 @@ namespace MTTRunner
         {
             if (args.Length != 2)
             {
-                throw new Exception("Arguments should contain the ConvertDirectory and the WorkingDirectory");
+                Console.WriteLine("Assuming testing...");
+
+                args = new string[2] {"", ""};
+                
+                //works for vs code
+                args[0] = "../../example/Resources";
+                args[1] = "../../example/models";
             }
 
             Program.StartService(args);

@@ -8,5 +8,11 @@ namespace MTT
         public bool IsOptional { get; set; }
         public bool UserDefined { get; set; }
         public string UserDefinedImport { get; set; }
+        public LineObject[] Container { get; set; }
+        public bool IsContainer { 
+            get {
+                return Container != null ? Container.Length > 0 : false;
+            }
+        } 
     }
 }
