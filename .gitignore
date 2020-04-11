@@ -3,6 +3,8 @@
 *.userosscache
 *.sln.docstates
 
+.DS_STORE
+
 obj/
 packages/
 bin/
