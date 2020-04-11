@@ -3,8 +3,6 @@
 *.userosscache
 *.sln.docstates
 
-.DS_STORE
-
 obj/
 packages/
 bin/
@@ -16,3 +14,5 @@ models/
 .idea/
 Source/TestConsole/Program.cs
 Source/TestConsole/TestConsole.csproj
+
+.DS_STORE
