@@ -450,6 +450,7 @@ namespace MTT
                 case "char":
                 case "String":
                 case "Char":
+                case "Guid":
                     return "string";
 
                 case "DateTime":
