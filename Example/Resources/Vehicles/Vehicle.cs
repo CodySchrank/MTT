@@ -1,3 +1,4 @@
+using System.Guid;
 using System.Collections.Generic;
 using Example.Resources.Parts;
 using Example.Resources.Parts.Unit;
@@ -26,5 +27,7 @@ namespace Example.Resources.Vehicles
         public virtual ICollection<Part> Parts { get; set; }
         
         public IList<Part> SpareParts { get; set; } = new List<Part>();
+        
+		public Guid id { get; set; }
     }
 }

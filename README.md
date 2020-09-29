@@ -134,6 +134,7 @@ It correctly converts the following C# types to the equivalent typescript:
 * abstract
 * Dictionary
 * IDictionary
+* Guid
 
 ## Notes
 
