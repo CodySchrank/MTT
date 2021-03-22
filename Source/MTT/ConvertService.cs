@@ -597,7 +597,7 @@ namespace MTT
                                     ToCamelCase(obj.VariableName)
                                     + (obj.IsOptional ? "?" : String.Empty)
                                     + ": "
-                                    + $"{obj.Type}<{obj.Container[0].Type}, {obj.Container[1].Type}>;";
+                                    + $"Partial<{obj.Type}<{obj.Container[0].Type}, {obj.Container[1].Type}>>;";
 
                                 f.WriteLine("    " + str);
                             }
