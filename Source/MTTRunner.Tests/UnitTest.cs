@@ -101,7 +101,7 @@ namespace MTTRunner.Tests
         public void CheckRecordExists() {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
-            Assert.That(lines[12], Is.EqualTo("    options: Record<string, Units>;"));
+            Assert.That(lines[12], Is.EqualTo("    options: Partial<Record<string, Units>>;"));
         }
 
         [Test]
