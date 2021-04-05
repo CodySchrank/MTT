@@ -84,7 +84,7 @@ export interface Vehicle extends Entity {
     make: string;
     model: string;
     mileage?: number;
-    options: Record<string, Units>;
+    options: Partial<Record<string, Units>>;
     condition: VehicleState;
     parts: Part[];
     spareParts: Part[];
