@@ -129,7 +129,7 @@ namespace MTTRunner.Tests
         public void GuidExists()
         {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
-            Assert.That(lines[16], Is.EqualTo("    id: string;"));
+            Assert.That(lines[16], Is.EqualTo("    userId: string;"));
         }
 
         [Test]
