@@ -36,7 +36,7 @@ _PathStyle_ (default is folders stay the same and files become camelCase) if set
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MTT" Version="0.6.5"/>
+    <PackageReference Include="MTT" Version="0.7.0"/>
   </ItemGroup>
 
   <Target Name="Convert" BeforeTargets="PrepareForBuild">
@@ -84,7 +84,7 @@ export interface Vehicle extends Entity {
     make: string;
     model: string;
     mileage?: number;
-    options: Map<string, Units>;
+    options: Record<string, Units>;
     condition: VehicleState;
     parts: Part[];
     spareParts: Part[];
