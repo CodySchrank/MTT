@@ -20,7 +20,7 @@ namespace MTTRunner.Tests
             VehicleFile = Path.Combine(CurrentDir, ConvertDir, "Vehicles/vehicle.ts");
             VehicleStateFile = Path.Combine(CurrentDir, ConvertDir, "Vehicles/vehicleState.ts");
 
-            var resources = CurrentDir.Replace("Source/MTTRunner.Tests/bin/Debug/netcoreapp2.2", "example/Resources");
+            var resources = CurrentDir.Replace("Source/MTTRunner.Tests/bin/Debug/netcoreapp3.1", "example/Resources");
 
             if(!Directory.Exists(resources)) {
                 throw new Exception("Resources Directory does not exist");
