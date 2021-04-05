@@ -1,4 +1,3 @@
-using System.Guid;
 using System.Collections.Generic;
 using Example.Resources.Parts;
 using Example.Resources.Parts.Unit;
