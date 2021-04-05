@@ -32,7 +32,7 @@ _PathStyle_ (default is folders stay the same and files become camelCase) if set
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -142,7 +142,7 @@ It correctly converts the following C# types to the equivalent typescript:
 
 Comments like `//` are ignored in c# files.  Comments like `/* */` could cause undefined behavior.
 
-Tested on Windows 10, macOS Mojave, and Ubuntu 18.04
+Tested on Windows 10, macOS Big Sur, and Ubuntu 18.04
 
 Follows the case and naming conventions of each language.
 
