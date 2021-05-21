@@ -22,6 +22,11 @@ namespace MTT
         public string WorkingDirectory { get; set; }
 
         /// <summary>
+        /// A list of ';' seperated directories for the convert process
+        /// </summary>
+        public string WorkingDirectories { get; set; }
+
+        /// <summary>
         /// The directory to save the ts models
         /// </summary>
         public string ConvertDirectory { get; set; }
@@ -35,7 +40,7 @@ namespace MTT
         /// Determines whether to generate numeric or string values in typescript enums
         /// </summary>
         public EnumValues EnumValues { get; internal set; }
-        
+
         /// <summary>
         /// Determines the naming style of the generated files and folders
         /// </summary>
@@ -43,7 +48,15 @@ namespace MTT
 
         private List<ModelFile> Models { get; set; }
 
-        private string LocalWorkingDir { get; set; }
+        /// <summary>
+        /// The set of directories to query for models
+        /// </summary>
+        private List<string> LocalWorkingDirs { get; set; }
+
+        /// <summary>
+        /// The least common parent of the working directories to facilitate computing the relative path difference
+        /// </summary>
+        private string CommonParentDir { get; set; }
 
         private string LocalConvertDir { get; set; }
 
@@ -52,15 +65,17 @@ namespace MTT
         public ConvertService(LogAction log)
         {
             Models = new List<ModelFile>();
+            LocalWorkingDirs = new List<string>();
             this.log = log;
         }
 
         public bool Execute()
         {
             log("Starting MTT ConvertService");
-            GetWorkingDirectory();
+            GetWorkingDirectories();
+            CalculateLeastCommonParentFolder();
             GetConvertDirectory();
-            LoadModels();
+            LocalWorkingDirs.ForEach(dir => LoadModels(dir));
 
             try
             {
@@ -76,30 +91,70 @@ namespace MTT
             return true;
         }
 
-        private void GetWorkingDirectory()
+        private void CalculateLeastCommonParentFolder()
+        { 
+            if (LocalWorkingDirs.Count == 1)
+            {
+                CommonParentDir = LocalWorkingDirs[0];
+                return;
+            }
+
+            CommonParentDir = "";
+
+            string referenceDir = LocalWorkingDirs[0];
+            int index = 0;
+
+            // Compute least common substring
+            while (LocalWorkingDirs.Aggregate(true, (same, next) => same && next.StartsWith(referenceDir.Substring(0, index))))
+            {
+                index++;
+            }
+
+            if (index == 0)
+            {
+                log("Directories have no common parent. This will not work.");
+                return;
+            }
+
+            CommonParentDir = referenceDir.Substring(0, index-1);
+            CommonParentDir = CommonParentDir.Replace(@"\", "/");
+
+            // Least common substring may contain partial folder names. Trim these off.
+            if (!CommonParentDir.EndsWith("/"))
+            {
+                CommonParentDir = CommonParentDir.Substring(0, CommonParentDir.LastIndexOf('/')+1);
+            }
+        }
+
+        private void GetWorkingDirectories()
         {
             var dir = Directory.GetCurrentDirectory();
 
-            if (string.IsNullOrEmpty(WorkingDirectory))
+            if (string.IsNullOrEmpty(WorkingDirectory) && string.IsNullOrEmpty(WorkingDirectories))
             {
                 log("Using Default Working Directory {0}", dir);
-                LocalWorkingDir = dir;
+                LocalWorkingDirs.Add(dir);
                 return;
             }
 
-            var localdir = Path.Combine(dir, WorkingDirectory);
+            List<string> workingDirectories = $"{WorkingDirectory};{WorkingDirectories}".Split(';').ToList();
 
-            if (!Directory.Exists(localdir))
-            {
-                log("Working Directory does not exist {0}, creating..", localdir);
-                Directory.CreateDirectory(localdir).Create();
-                LocalWorkingDir = localdir;
-                return;
+            foreach (string workingDirectory in workingDirectories) {
+                if (string.IsNullOrWhiteSpace(workingDirectory)){
+                    continue;
+                }
+
+                var localdir = Path.Combine(dir, workingDirectory);
+
+                if (!Directory.Exists(localdir))
+                {
+                    log("Working Directory does not exist {0}, creating..", localdir);
+                    Directory.CreateDirectory(localdir).Create();
+                }
+
+                log("Adding Working Directory {0}", localdir);
+                LocalWorkingDirs.Add(localdir);
             }
-
-            log("Working Directory {0}", localdir);
-            LocalWorkingDir = localdir;
-            return;
         }
 
         private void GetConvertDirectory()
@@ -152,11 +207,11 @@ namespace MTT
             }
         }
 
-        private void LoadModels(string dirname = "")
+        private void LoadModels(string localWorkingDir, string dirname = "")
         {
             if (String.IsNullOrEmpty(dirname))
             {
-                dirname = LocalWorkingDir;
+                dirname = localWorkingDir;
             }
 
             var files = Directory.GetFiles(dirname);
@@ -168,11 +223,11 @@ namespace MTT
 
                 if (!String.IsNullOrEmpty(d))
                 {
-                    LoadModels(dir);
+                    LoadModels(localWorkingDir, dir);
                 }
             }
 
-            var workingUri = new Uri(EnsureTrailingSlash(LocalWorkingDir));
+            var workingUri = new Uri(EnsureTrailingSlash(localWorkingDir));
             var dirUri = new Uri(dirname);
             var relativePath = workingUri.MakeRelativeUri(dirUri).OriginalString;
             foreach (var file in files)
@@ -791,8 +846,8 @@ namespace MTT
 
         private string GetRelativePathFromLocalPath(string from, string to)
         {
-            var path1 = Path.Combine(LocalWorkingDir, from);
-            var path2 = Path.Combine(LocalWorkingDir, to);
+            var path1 = Path.Combine(CommonParentDir, from);
+            var path2 = Path.Combine(CommonParentDir, to);
             path1 = path1.Replace("/", "\\");
             path2 = path2.Replace("/", "\\");
 
