@@ -357,24 +357,30 @@ namespace MTT
                                 Container = new LineObject[2]
                             };
 
-                            List<string> types = CleanType(type).Replace("Dictionary", String.Empty).Replace("IDictionary", String.Empty).Split(',').ToList();
+                            int genericArgStart = type.IndexOf("<");
+                            int genericArgEnd = type.LastIndexOf(">");
+                            string genericArg = type.Substring(genericArgStart + 1, genericArgEnd - genericArgStart - 1);
+                            List<string> types = genericArg.Split(',').ToList();
+
                             types.ForEach(x => x.Trim());
-                        
+
                             int index = 0;
                             foreach(string t in types)
                             {
-                                string innerType = CleanType(t);
+                                var tIsArray = CheckIsArray(t);
 
-                                var userDefinedImport = Find(innerType, file);
-                                var isUserDefined = !String.IsNullOrEmpty(userDefinedImport);
+                                string cleanType = CleanType(t);
+
+                                var userDefinedImport = Find(cleanType, file);
+                                var tIsUserDefined = !string.IsNullOrEmpty(userDefinedImport);
 
                                 LineObject lo = new LineObject()
                                 {
                                     VariableName = "",
-                                    Type = isUserDefined ? innerType : TypeOf(innerType),
-                                    IsArray = false,
+                                    Type = tIsUserDefined ? cleanType : TypeOf(cleanType),
+                                    IsArray = tIsArray,
                                     IsOptional = false,
-                                    UserDefined = isUserDefined,
+                                    UserDefined = tIsUserDefined,
                                     UserDefinedImport = userDefinedImport
                                 };
 
@@ -593,11 +599,12 @@ namespace MTT
                         {
                             if(obj.IsContainer)
                             {
+                                LineObject[] objects = obj.Container;
                                 var str =
                                     ToCamelCase(obj.VariableName)
                                     + (obj.IsOptional ? "?" : String.Empty)
                                     + ": "
-                                    + $"Partial<{obj.Type}<{obj.Container[0].Type}, {obj.Container[1].Type}>>;";
+                                    + $"Partial<{obj.Type}<{objects[0].Type}{(objects[0].IsArray ? "[]" : "")}, {objects[1].Type}{(objects[1].IsArray ? "[]" : "")}>>;";
 
                                 f.WriteLine("    " + str);
                             }

@@ -29,5 +29,7 @@ namespace Example.Resources.Vehicles
         public IList<Part> SpareParts { get; set; } = new List<Part>();
 
         public Guid UserId { get; set; } 
+
+        public ReadOnlyDictionary<string, IList<Units>> UnitsListMap { get; set; }
     }
 }
