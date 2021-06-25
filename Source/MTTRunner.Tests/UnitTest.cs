@@ -124,12 +124,19 @@ namespace MTTRunner.Tests
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
             Assert.That(lines[15], Is.EqualTo("    spareParts: Part[];"));
         }
-        
+
         [Test]
         public void GuidExists()
         {
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
             Assert.That(lines[16], Is.EqualTo("    userId: string;"));
+        }
+
+        [Test]
+        public void UnitListsMapExists()
+        {
+            string[] lines = System.IO.File.ReadAllLines(VehicleFile);
+            Assert.That(lines[17], Is.EqualTo("    unitsListMap: Partial<Record<string, Units[]>>;"));
         }
 
         [Test]
