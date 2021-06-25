@@ -141,6 +141,7 @@ It correctly converts the following C# types to the equivalent typescript:
 ## Notes
 
 **If a _Convert Directory_ is supplied, it will be deleted everytime script is ran and will be remade**
+
 **If a _Working Directory_ is supplied along with a list of _Working Directories_ they will all be considered for conversion**
 
 Comments like `//` are ignored in c# files.  Comments like `/* */` could cause undefined behavior.
