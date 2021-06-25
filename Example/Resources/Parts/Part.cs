@@ -4,6 +4,18 @@ namespace Example.Resources.Parts
 {
     public class Part: Entity
     {
+        public Part(
+            string partName,
+            string partCategory,
+            string routeNumber,
+            Units units)
+       {
+            PartName = partName;
+            PartCategory = partCategory;
+            Routenumber = routeNumber;
+            Units = units;
+       }
+
         public string PartName { get; set; }
 
         public string PartCategory { get; set; }

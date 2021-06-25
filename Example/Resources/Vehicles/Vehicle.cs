@@ -11,6 +11,13 @@ namespace Example.Resources.Vehicles
 {
     public abstract class Vehicle : Entity 
     {
+        public Vehicle(int year, string make, string model) 
+        {
+            Year = year;
+            Make = make;
+            model = model;
+        }
+        
         // this is a top level comment
         public int Year { get; set; }
 

@@ -308,7 +308,7 @@ namespace MTT
 
                             modLine = new List<string>(ExplodeLine(enumLine));
 
-                            if (IsEnumObject(enumLine))
+                            if (IsEnumObject(enumLine, file.Name))
                             {
                                 String name = modLine[0];
                                 bool isImplicit = false;
@@ -376,7 +376,7 @@ namespace MTT
                     }
 
                     // Class property
-                    if (line.StrictContains("public") && !line.StrictContains("class") && !IsContructor(line))
+                    if (line.StrictContains("public") && !line.StrictContains("class") && !IsContructor(line, file.Name))
                     {
                         string type = modLine[0];
                         /** If the property is marked virtual, skip the virtual keyword. */
@@ -799,19 +799,21 @@ namespace MTT
                 .Replace(">", String.Empty);
         }
 
-        private bool IsContructor(string line)
+        private bool IsContructor(string line, string fileName)
         {
-            return !line.StrictContains("new") && (line.Contains("()") || ((line.Contains("(") && line.Contains(")"))));
+            return (!line.StrictContains("new") && (line.Contains("()") || (line.Contains("(") && line.Contains(")")))) || 
+                line.Contains("public " + fileName + "(");
         }
 
-        private bool IsEnumObject(string line)
+
+        private bool IsEnumObject(string line, string fileName)
         {
             return 
                 !String.IsNullOrWhiteSpace(line)
                 && !line.StrictContains("enum")
                 && !line.StrictContains("namespace")
                 && !line.StrictContains("using")
-                && !IsContructor(line) 
+                && !IsContructor(line, fileName) 
                 && !line.Contains("{") && !line.Contains("}")
                 && !line.Contains("[") && !line.Contains("]");
         }
