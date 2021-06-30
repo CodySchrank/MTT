@@ -14,9 +14,7 @@ Then in .csproj add a Target.
 
 ## Options
 
-_WorkingDirectory_ is the input directory of the c# dtos
-
-_WorkingDirectories_ is an option for passing multiple input directories of c# dtos (seperated with ;)
+_WorkingDirectory_ is the input directory of the c# dtos (seperate multiple directories with ';')
 
 _ConvertDirectory_ is the output directory of the ts interfaces
 
@@ -141,8 +139,6 @@ It correctly converts the following C# types to the equivalent typescript:
 ## Notes
 
 **If a _Convert Directory_ is supplied, it will be deleted everytime script is ran and will be remade**
-
-**If a _Working Directory_ is supplied along with a list of _Working Directories_ they will all be considered for conversion**
 
 Comments like `//` are ignored in c# files.  Comments like `/* */` could cause undefined behavior.
 

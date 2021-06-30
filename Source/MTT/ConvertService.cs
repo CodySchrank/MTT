@@ -18,13 +18,9 @@ namespace MTT
 
         /// <summary>
         /// The current working directory for the convert process
+        /// Seperate multiple directories with ';'
         /// </summary>
         public string WorkingDirectory { get; set; }
-
-        /// <summary>
-        /// A list of ';' seperated directories for the convert process
-        /// </summary>
-        public string WorkingDirectories { get; set; }
 
         /// <summary>
         /// The directory to save the ts models
@@ -130,14 +126,14 @@ namespace MTT
         {
             var dir = Directory.GetCurrentDirectory();
 
-            if (string.IsNullOrEmpty(WorkingDirectory) && string.IsNullOrEmpty(WorkingDirectories))
+            if (string.IsNullOrEmpty(WorkingDirectory))
             {
                 log("Using Default Working Directory {0}", dir);
                 LocalWorkingDirs.Add(dir);
                 return;
             }
 
-            List<string> workingDirectories = $"{WorkingDirectory};{WorkingDirectories}".Split(';').ToList();
+            List<string> workingDirectories = WorkingDirectory.Split(';').ToList();
 
             foreach (string workingDirectory in workingDirectories) {
                 if (string.IsNullOrWhiteSpace(workingDirectory)){
