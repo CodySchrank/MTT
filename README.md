@@ -14,9 +14,7 @@ Then in .csproj add a Target.
 
 ## Options
 
-_WorkingDirectory_ is the input directory of the c# dtos
-
-_WorkingDirectories_ is an option for passing multiple input directories of c# dtos (seperated with ;)
+_WorkingDirectory_ is the input directory of the c# dtos. (seperate multiple directories with ';')
 
 _ConvertDirectory_ is the output directory of the ts interfaces
 
@@ -57,7 +55,7 @@ using Example.Resources.Parts.Unit;
 
 namespace Example.Resources.Vehicles
 {
-    public abstract class Vehicle : Entity 
+    public abstract class Vehicle : Entity
     {
         public int Year { get; set; }
         public string Make { get; set; }
@@ -82,61 +80,60 @@ import { VehicleState } from "./vehicleState";
 import { Part } from "./../Parts/part";
 
 export interface Vehicle extends Entity {
-    year: number;
-    make: string;
-    model: string;
-    mileage?: number;
-    options: Partial<Record<string, Units>>;
-    condition: VehicleState;
-    parts: Part[];
-    spareParts: Part[];
+  year: number;
+  make: string;
+  model: string;
+  mileage?: number;
+  options: Partial<Record<string, Units>>;
+  condition: VehicleState;
+  parts: Part[];
+  spareParts: Part[];
 }
-
 ```
 
 ## Types
 
 It correctly converts the following C# types to the equivalent typescript:
 
-* bool
-* byte
-* decimal
-* double
-* float
-* int
-* uint
-* long
-* sbyte
-* short
-* string
-* ulong
-* ushort
-* Boolean
-* Byte
-* Char
-* DateTime
-* Decimal
-* Double
-* Int16
-* Int32
-* Int64
-* SByte
-* UInt16
-* UInt32
-* UInt64
-* Array
-* Collection
-* Enumerbale
-* IEnumerable
-* ICollection
-* IList
-* Enum
-* Optional
-* virtual
-* abstract
-* Dictionary
-* IDictionary
-* Guid
+- bool
+- byte
+- decimal
+- double
+- float
+- int
+- uint
+- long
+- sbyte
+- short
+- string
+- ulong
+- ushort
+- Boolean
+- Byte
+- Char
+- DateTime
+- Decimal
+- Double
+- Int16
+- Int32
+- Int64
+- SByte
+- UInt16
+- UInt32
+- UInt64
+- Array
+- Collection
+- Enumerbale
+- IEnumerable
+- ICollection
+- IList
+- Enum
+- Optional
+- virtual
+- abstract
+- Dictionary
+- IDictionary
+- Guid
 
 ## Notes
 
@@ -144,7 +141,7 @@ It correctly converts the following C# types to the equivalent typescript:
 
 **If a _Working Directory_ is supplied along with a list of _Working Directories_ they will all be considered for conversion**
 
-Comments like `//` are ignored in c# files.  Comments like `/* */` could cause undefined behavior.
+Comments like `//` are ignored in c# files. Comments like `/* */` could cause undefined behavior.
 
 Tested on Windows 10, macOS Big Sur, and Ubuntu 18.04
 
