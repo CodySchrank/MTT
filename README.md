@@ -24,6 +24,8 @@ _EnumValues_ (default int enums) if set to _Strings_, generates typescript [stri
 
 _PathStyle_ (default is folders stay the same and files become camelCase) if set to _Kebab_, changes the file and directory names to [kebab-case](https://wiki.c2.com/?KebabCase).
 
+_PropertyStyle_ (default is CamelCase) if set to _PascalCase_, changes the properties to [PascalCase](https://wiki.c2.com/?PascalCase).
+
 ## Example
 
 ### .csproj
