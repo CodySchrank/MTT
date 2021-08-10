@@ -568,7 +568,19 @@ namespace MTT
                         {
                             if (!String.IsNullOrEmpty(obj.Name))
                             {  //not an empty obj
-                                var tsName = ToCamelCase(obj.Name);
+                                string tsName;
+                                switch (PropertyStyle)
+                                {
+                                    case PropertyStyle.CamelCase:
+                                        tsName = ToCamelCase(obj.Name);
+                                        break;
+                                    case PropertyStyle.PascalCase:
+                                        tsName = ToPascalCase(obj.Name);
+                                        break;
+                                    default:
+                                        throw new ArgumentOutOfRangeException();
+                                }
+
                                 var str = tsName;
                                 if (EnumValues == EnumValues.Strings)
                                 {
