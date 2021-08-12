@@ -42,6 +42,11 @@ namespace MTT
         /// </summary>
         public PathStyle PathStyle { get; set; }
 
+        /// <summary>
+        /// Determines the naming style of the generated properties
+        /// </summary>
+        public PropertyStyle PropertyStyle { get; set; }
+
         private List<ModelFile> Models { get; set; }
 
         /// <summary>
@@ -563,7 +568,19 @@ namespace MTT
                         {
                             if (!String.IsNullOrEmpty(obj.Name))
                             {  //not an empty obj
-                                var tsName = ToCamelCase(obj.Name);
+                                string tsName;
+                                switch (PropertyStyle)
+                                {
+                                    case PropertyStyle.CamelCase:
+                                        tsName = ToCamelCase(obj.Name);
+                                        break;
+                                    case PropertyStyle.PascalCase:
+                                        tsName = ToPascalCase(obj.Name);
+                                        break;
+                                    default:
+                                        throw new ArgumentOutOfRangeException();
+                                }
+
                                 var str = tsName;
                                 if (EnumValues == EnumValues.Strings)
                                 {
@@ -648,11 +665,24 @@ namespace MTT
 
                         foreach (var obj in file.Objects)
                         {
+                            string propertyName;
+                            switch (PropertyStyle)
+                            {
+                                case PropertyStyle.CamelCase:
+                                    propertyName = ToCamelCase(obj.VariableName);
+                                    break;
+                                case PropertyStyle.PascalCase:
+                                    propertyName = ToPascalCase(obj.VariableName);
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+
                             if(obj.IsContainer)
                             {
                                 LineObject[] objects = obj.Container;
                                 var str =
-                                    ToCamelCase(obj.VariableName)
+                                    propertyName
                                     + (obj.IsOptional ? "?" : String.Empty)
                                     + ": "
                                     + $"Partial<{obj.Type}<{objects[0].Type}{(objects[0].IsArray ? "[]" : "")}, {objects[1].Type}{(objects[1].IsArray ? "[]" : "")}>>;";
@@ -662,7 +692,7 @@ namespace MTT
                             else if (!String.IsNullOrEmpty(obj.VariableName))
                             {  //not an empty obj
                                 var str =
-                                    ToCamelCase(obj.VariableName)
+                                    propertyName
                                     + (obj.IsOptional ? "?" : String.Empty)
                                     + ": "
                                     + obj.Type

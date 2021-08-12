@@ -3,6 +3,7 @@ using MTTRunner;
 using System.IO;
 using System;
 using System.Text.RegularExpressions;
+using MTT;
 
 namespace MTTRunner.Tests
 {
@@ -11,14 +12,19 @@ namespace MTTRunner.Tests
         private readonly string CurrentDir = Directory.GetCurrentDirectory().Replace("\\", "/");
         private readonly string WorkingDir = "workingDir/";
         private readonly string ConvertDir = "convertDir/";
+        private readonly string ConvertDirPascal = "convertDirPascal/";
         private string VehicleFile;
+        private string VehicleFilePascal;
         private string VehicleStateFile;
+        private string VehicleStateFilePascal;
 
         [SetUp]
         public void Setup()
         {
             VehicleFile = Path.Combine(CurrentDir, ConvertDir, "Vehicles/vehicle.ts");
             VehicleStateFile = Path.Combine(CurrentDir, ConvertDir, "Vehicles/vehicleState.ts");
+            VehicleFilePascal = Path.Combine(CurrentDir, ConvertDirPascal, "Vehicles/vehicle.ts");
+            VehicleStateFilePascal = Path.Combine(CurrentDir, ConvertDirPascal, "Vehicles/vehicleState.ts");
 
             var resources = CurrentDir.Replace("Source/MTTRunner.Tests/bin/Debug/netcoreapp3.1", "example/Resources");
 
@@ -32,9 +38,13 @@ namespace MTTRunner.Tests
 
             DirectoryCopy(resources, WorkingDir, true);
 
+            // Start service for standard tests
             var dirs = new string[] {WorkingDir, ConvertDir};
-
             MTTRunner.Program.StartService(dirs);
+
+            // Start service for testing Pascal casing
+            var pascalCaseDirs = new string[] {WorkingDir, ConvertDirPascal};
+            MTTRunner.Program.StartService(pascalCaseDirs, PropertyStyle.PascalCase);
         }
 
         [Test]
@@ -88,6 +98,14 @@ namespace MTTRunner.Tests
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
             Assert.That(lines[8], Is.EqualTo("    year: number;"));
+        }
+
+        [Test]
+        public void PropertyExistsWithPascalCase()
+        {
+            string[] lines = System.IO.File.ReadAllLines(VehicleFilePascal);
+
+            Assert.That(lines[8], Is.EqualTo("    Year: number;"));
         }
 
         [Test]
@@ -189,6 +207,14 @@ namespace MTTRunner.Tests
             string[] lines = System.IO.File.ReadAllLines(VehicleStateFile);
 
             Assert.That(lines[3], Is.EqualTo("    broken = 1,"));
+        }
+
+        [Test]
+        public void PascalEnumPropertyWithValueExists()
+        {
+            string[] lines = System.IO.File.ReadAllLines(VehicleStateFilePascal);
+
+            Assert.That(lines[3], Is.EqualTo("    Broken = 1,"));
         }
 
         [Test]
