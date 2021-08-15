@@ -144,8 +144,6 @@ It correctly converts the following C# types to the equivalent typescript:
 
 Comments like `//` are ignored in c# files.  Comments like `/* */` could cause undefined behavior.
 
-Tested on Windows 10, macOS Big Sur, and Ubuntu 18.04
-
-Follows the case and naming conventions of each language.
+Follows the case and naming conventions of each language by default.  However this behavior can be modified with the options.
 
 Thanks to natemcmaster [this project](https://github.com/natemcmaster/msbuild-tasks) really helped me out!
