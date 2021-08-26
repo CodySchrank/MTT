@@ -25,12 +25,13 @@ namespace MTTRunner
             Program.StartService(args);
         }
 
-        public static void StartService(string[] args, PropertyStyle propertyStyle = PropertyStyle.CamelCase) {
+        public static void StartService(string[] args, PropertyStyle propertyStyle = PropertyStyle.CamelCase, ExportStyle exportStyle = ExportStyle.Interface) {
             var convertService = new ConvertService((logString, logArgs) => Console.WriteLine(logString, logArgs))
             {
                 WorkingDirectory = args[0],
                 ConvertDirectory = args[1],
-                PropertyStyle = propertyStyle
+                PropertyStyle = propertyStyle,
+                ExportStyle = exportStyle
             };
             
             convertService.Execute();

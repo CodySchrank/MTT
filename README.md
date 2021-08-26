@@ -26,6 +26,8 @@ _PathStyle_ (default is folders stay the same and files become camelCase) if set
 
 _PropertyStyle_ (default is CamelCase) if set to _PascalCase_, changes the properties to [PascalCase](https://wiki.c2.com/?PascalCase).
 
+_ExportStyle_ (default is Interface) if set to _Class_, exports a class instead of an interface.
+
 ## Example
 
 ### .csproj
