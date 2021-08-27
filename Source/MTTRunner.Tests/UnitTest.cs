@@ -13,10 +13,12 @@ namespace MTTRunner.Tests
         private readonly string WorkingDir = "workingDir/";
         private readonly string ConvertDir = "convertDir/";
         private readonly string ConvertDirPascal = "convertDirPascal/";
+        private readonly string ConvertDirClass = "convertDirClass/";
         private string VehicleFile;
         private string VehicleFilePascal;
         private string VehicleStateFile;
         private string VehicleStateFilePascal;
+        private string VehicleFileClass;
 
         [SetUp]
         public void Setup()
@@ -25,6 +27,7 @@ namespace MTTRunner.Tests
             VehicleStateFile = Path.Combine(CurrentDir, ConvertDir, "Vehicles/vehicleState.ts");
             VehicleFilePascal = Path.Combine(CurrentDir, ConvertDirPascal, "Vehicles/vehicle.ts");
             VehicleStateFilePascal = Path.Combine(CurrentDir, ConvertDirPascal, "Vehicles/vehicleState.ts");
+            VehicleFileClass = Path.Combine(CurrentDir, ConvertDirClass, "Vehicles/vehicle.ts");
 
             var resources = CurrentDir.Replace("Source/MTTRunner.Tests/bin/Debug/netcoreapp3.1", "example/Resources");
 
@@ -45,6 +48,10 @@ namespace MTTRunner.Tests
             // Start service for testing Pascal casing
             var pascalCaseDirs = new string[] {WorkingDir, ConvertDirPascal};
             MTTRunner.Program.StartService(pascalCaseDirs, PropertyStyle.PascalCase);
+
+            // Start service for testing class export style
+            var classExportDirs = new string[] { WorkingDir, ConvertDirClass };
+            MTTRunner.Program.StartService(classExportDirs, PropertyStyle.PascalCase, ExportStyle.Class);
         }
 
         [Test]
@@ -91,6 +98,14 @@ namespace MTTRunner.Tests
             string[] lines = System.IO.File.ReadAllLines(VehicleFile);
 
             Assert.That(lines[7], Is.EqualTo("export interface Vehicle extends Entity {"));
+        }
+
+        [Test]
+        public void ExportExistsWithClass()
+        {
+            string[] lines = System.IO.File.ReadAllLines(VehicleFileClass);
+
+            Assert.That(lines[7], Is.EqualTo("export class Vehicle extends Entity {"));
         }
 
         [Test]

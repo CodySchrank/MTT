@@ -47,6 +47,11 @@ namespace MTT
         /// </summary>
         public PropertyStyle PropertyStyle { get; set; }
 
+        /// <summary>
+        /// Export an interface or a class
+        /// </summary>
+        public ExportStyle ExportStyle { get; set; }
+
         private List<ModelFile> Models { get; set; }
 
         /// <summary>
@@ -657,7 +662,8 @@ namespace MTT
                         }
 
                         f.WriteLine(
-                            "export interface "
+                            "export "
+                            + (ExportStyle == ExportStyle.Interface ? "interface " : "class ")
                             + file.Name
                             + (String.IsNullOrEmpty(file.Inherits) ? "" : (" extends " + file.Inherits)) //if class has inheritance
                             + " {"
